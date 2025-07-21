@@ -4,7 +4,9 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello World");
 
-        playGuessingGame(0, 100);
+        //playGuessingGame(0, 100);
+
+        System.out.println(gradeCalculator());
     }
     public static void playGuessingGame(int min, int max) {
         Scanner in = new Scanner(System.in);
@@ -33,4 +35,25 @@ public class Main {
         System.out.println("It was.:" + randomNumber);
     }
 
+    public static double gradeCalculator(){
+        Scanner in = new Scanner(System.in);
+
+        int gradeCount = 0;
+        double grade = 0;
+        while(true){
+            int input = in.nextInt();
+            if(input == 101){
+                break;
+            }
+            else if(input >= 0 && input <= 100){
+                gradeCount++;
+                grade += input;
+
+
+            }else {
+                System.out.println("Wrong input. Try a number between 0 and 100");
+            }
+        }
+        return grade/gradeCount;
+    }
 }
