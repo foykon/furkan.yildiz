@@ -13,7 +13,11 @@ public class Main {
 
 
 
-
+        Circle circle = new Circle(3,"blue");
+        Rectangle rectangle = new Rectangle(3,3, "yellow");
+        Pen pen = new Pen();
+        System.out.println(pen.drawShape(circle));
+        System.out.println(pen.drawShape(rectangle));
 
 
 
@@ -29,11 +33,7 @@ public class Main {
 
         /* july22
         System.out.println(Arrays.toString(July22Questions.reverseArray(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})));
-        Circle circle = new Circle(3,"blue");
-        Rectangle rectangle = new Rectangle(3,3, "yellow");
-        Pen pen = new Pen();
-        System.out.println(pen.drawShape(circle));
-        System.out.println(pen.drawShape(rectangle));
+
         */
 
         /* july 21
