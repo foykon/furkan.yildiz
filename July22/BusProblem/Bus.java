@@ -32,6 +32,10 @@ public class Bus {
     }
 
     public void insertPassenger(Passenger passenger) {
+        if(passenger == null) {
+            throw new IllegalArgumentException("Passenger cannot be null");
+        }
+
         if (passenger.getDestination() == destination ) {
             Passenger[] newPassengers = new Passenger[passengers.length + 1];
             System.arraycopy(passengers, 0, newPassengers, 0, passengers.length);
