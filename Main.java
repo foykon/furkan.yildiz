@@ -8,17 +8,19 @@ public class Main {
         // System.out.println("Hello World by furkan.yildiz");
 
 
+
+
+
+
+
+
+        // july22 bus problem
         Bus bus1 = new Bus();
         bus1.setDestination(Destination.ANKARA);
-
+        bus1.setMaxCapacity(1);
         bus1.insertPassenger(new Passenger("Ali",Destination.ANKARA));
         bus1.insertPassenger(new Passenger("Murat",Destination.ISTANBUL));
         bus1.insertPassenger(new Passenger("Furkan",Destination.ANKARA));
-
-
-
-
-
 
 
         /* july22
