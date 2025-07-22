@@ -5,6 +5,7 @@ import July22.PenAndShapes.Circle;
 import July22.PenAndShapes.Pen;
 import July22.PenAndShapes.Rectangle;
 import July22Homework.AreaCalc.Calculator;
+import July22Homework.ECommerce.ShoppingCart;
 
 import java.util.Calendar;
 import java.util.Scanner;
@@ -14,10 +15,11 @@ public class Main {
 
         // System.out.println("Hello World by furkan.yildiz");
 
-        Calculator calculator = new Calculator(new Scanner(System.in));
-        calculator.run();
+        //Calculator calculator = new Calculator(new Scanner(System.in));
+        //calculator.run();
 
-
+        ShoppingCart cart = new ShoppingCart(new Scanner(System.in));
+        cart.shop();
 
 
 
