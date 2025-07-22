@@ -7,21 +7,21 @@ public class Pen {
 
     public static final double PI = 3.14;
 
-    public double draw(Rectangle rect){
-        return rect.getHeight()*rect.getWidth();
+    public double drawShape(Shape shape) {
+        if(shape instanceof Rectangle) {
+            Rectangle rect = (Rectangle) shape;
+            return rect.draw();
+        }else if(shape instanceof Circle) {
+            Circle circle = (Circle) shape;
+            return circle.draw();
+        }
+        else return 0;
+
     }
 
-    public double draw(Circle circle){
-        return circle.getRadius() * circle.getRadius() * PI;
+    public String changeColor(Shape shape,String color) {
+        shape.setColor(color);
+        return shape.toString();
     }
 
-    public String changeColor(Rectangle rect, String color){
-         rect.setColor(color);
-         return rect.getColor();
-    }
-
-    public String changeColor(Circle circ, String color){
-        circ.setColor(color);
-        return circ.getColor();
-    }
 }

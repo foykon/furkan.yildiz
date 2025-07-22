@@ -1,16 +1,24 @@
 package July22.PenAndShapes;
 
-public class Circle {
+public class Circle extends Shape {
+    private static final double PI = 3.14;
     private double radius;
-    private String color;
+
 
     public double getRadius() {
         return radius;
     }
 
     public Circle(double radius, String color) {
+        super(color);
         this.radius = radius;
         this.color = color;
+    }
+
+    @Override
+    public double draw() {
+        System.out.println("Drawing Circle");
+        return radius*radius*PI;
     }
 
     public void setRadius(double radius) {

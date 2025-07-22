@@ -1,18 +1,23 @@
 package July22.PenAndShapes;
 
-public class Rectangle {
+public class Rectangle extends Shape {
     private int width;
     private int height;
-    private String color;
 
     public String getColor() {
         return color;
     }
 
     public Rectangle(int width, int height, String color) {
+        super(color);
         this.width = width;
         this.height = height;
-        this.color = color;
+    }
+
+    @Override
+    public double draw() {
+        System.out.println("Drawing Rectangle");
+        return width * height;
     }
 
     public void setColor(String color) {
