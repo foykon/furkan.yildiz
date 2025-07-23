@@ -1,29 +1,18 @@
-import July22.BusProblem.Bus;
-import July22.BusProblem.Destination;
-import July22.BusProblem.Passenger;
-import July22.PenAndShapes.Circle;
-import July22.PenAndShapes.Pen;
-import July22.PenAndShapes.Rectangle;
-import July22Homework.AreaCalc.Calculator;
-import July22Homework.ECommerce.ShoppingCart;
-import July23.OccurrencesOfWord;
-import July23.School.Course;
-import July23.School.Student;
-import July23.StringExample;
-
-import java.io.*;
-import java.util.Calendar;
-import java.util.Scanner;
+import July23SelfLearning.ListSetMap;
 
 public class Main {
     public static void main(String[] args) {
         // System.out.println("Hello World by furkan.yildiz");
 
+        ListSetMap listSetMapStackQueue = new ListSetMap();
+        listSetMapStackQueue.run();
 
+
+
+        /* July23
         OccurrencesOfWord occ = new OccurrencesOfWord();
         occ.run();
 
-        /* July23
         System.out.println(StringExample.sameFrequency("This is not not", "is" ,"not"));
 
         Course course = new Course(1, "Java Ignite", "Basics Of Java");
