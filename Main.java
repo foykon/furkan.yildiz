@@ -1,12 +1,26 @@
+import July23SelfLearning.LibraryBookManagementSystem.BookManager;
+import July23SelfLearning.LibraryBookManagementSystem.LibraryManager;
+import July23SelfLearning.LibraryBookManagementSystem.SetValues;
+import July23SelfLearning.LibraryBookManagementSystem.UserManager;
 import July23SelfLearning.ListSetMap;
+
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         // System.out.println("Hello World by furkan.yildiz");
 
+
+        LibraryManager libraryManager = new LibraryManager(
+                                                new UserManager(SetValues.setUserValues()),
+                                                new BookManager(SetValues.setBookValues()),
+                                                new Scanner(System.in));
+        libraryManager.runManager();
+
+        /* July23 SelfLearning
         ListSetMap listSetMapStackQueue = new ListSetMap();
         listSetMapStackQueue.run();
-
+        */
 
 
         /* July23
