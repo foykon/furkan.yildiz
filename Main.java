@@ -20,11 +20,11 @@ public class Main {
         //FindPrimeNumber findPrimeNumber = new FindPrimeNumber(50);
         //findPrimeNumber.printPrimeNumbers();
 
-        CityConverter cityConverter = new CityConverter();
-        cityConverter.run();
+        //CityConverter cityConverter = new CityConverter();
+        //cityConverter.run();
 
-        //DatabaseUI databaseUI = new DatabaseUI();
-        //databaseUI.run();
+        DatabaseUI databaseUI = new DatabaseUI();
+        databaseUI.run();
 
 
 

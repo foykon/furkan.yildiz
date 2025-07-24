@@ -24,11 +24,10 @@ public class DatabaseUI {
             System.out.println("0 - Exit");
             switch (scanner.nextInt()){
                 case 1:
-                    dataStore = new InMemoryDataStore();
-                    pickDatabaseOperation();
+                    handleDatabase(DatabaseType.InMemoryDataStore);
                     break;
                 case 2:
-                    //dataStore = new FileDataStore();
+                    handleDatabase(DatabaseType.FileDataStore);
                     break;
                 case 0:
                     System.out.println("Goodbye!");
@@ -37,6 +36,23 @@ public class DatabaseUI {
                     break;
             }
         }
+    }
+
+    private  void handleDatabase(DatabaseType type){
+        switch (type){
+            case InMemoryDataStore:
+                dataStore = new InMemoryDataStore();
+                break;
+            case FileDataStore:
+                dataStore = new FileDataStore();
+                break;
+            default:
+                break;
+
+        }
+
+        pickDatabaseOperation();
+
     }
 
     public void pickDatabaseOperation(){
