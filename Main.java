@@ -6,6 +6,7 @@ import July23SelfLearning.ListSetMap;
 import July24.Book;
 import July24.LambdaExpression;
 import July24.Library;
+import July24Homework.SimpleDatabase.DatabaseUI;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -14,10 +15,14 @@ public class Main {
     public static void main(String[] args) {
         // System.out.println("Hello World by furkan.yildiz");
 
-        LambdaExpression.run();
+
+        DatabaseUI databaseUI = new DatabaseUI();
+        databaseUI.run();
 
 
 
+
+        // LambdaExpression.run();
 
         /* July23 SelfLearning
         LibraryManager libraryManager = new LibraryManager(
