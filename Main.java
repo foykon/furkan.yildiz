@@ -3,25 +3,32 @@ import July23SelfLearning.LibraryBookManagementSystem.LibraryManager;
 import July23SelfLearning.LibraryBookManagementSystem.SetValues;
 import July23SelfLearning.LibraryBookManagementSystem.UserManager;
 import July23SelfLearning.ListSetMap;
+import July24.Book;
+import July24.LambdaExpression;
+import July24.Library;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         // System.out.println("Hello World by furkan.yildiz");
 
+        LambdaExpression.run();
 
+
+
+
+        /* July23 SelfLearning
         LibraryManager libraryManager = new LibraryManager(
                                                 new UserManager(SetValues.setUserValues()),
                                                 new BookManager(SetValues.setBookValues()),
                                                 new Scanner(System.in));
         libraryManager.runManager();
 
-        /* July23 SelfLearning
         ListSetMap listSetMapStackQueue = new ListSetMap();
         listSetMapStackQueue.run();
         */
-
 
         /* July23
         OccurrencesOfWord occ = new OccurrencesOfWord();

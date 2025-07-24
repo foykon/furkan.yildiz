@@ -1,0 +1,32 @@
+Example Question:
+"Library Book Management System"
+A library wants to manage its book inventory and borrowers. The system should:
+
+Keep track of all books available in the library.
+
+Each book can have multiple copies.
+
+Keep track of borrowers and which books they have borrowed.
+
+Prevent a borrower from borrowing the same copy of a book more than once.
+
+Maintain the order in which books are added to the inventory.
+
+Tasks:
+Design collections to store books, their copies, and borrowers' borrowing records.
+
+Display all books currently borrowed by a specific borrower.
+
+Find out how many copies of a particular book are currently borrowed.
+
+Ensure no duplicate borrowers exist in the system.
+
+Preserve the order of books as they are added to the inventory.
+
+Suggested Use of Collections:
+Set: To store unique borrowers or unique copies of books a borrower has borrowed.
+
+List: To keep the ordered list of books in the inventory.
+
+Map: To associate borrowers with the sets of book copies they have borrowed (Map<Borrower, Set<BookCopy>>).
+
