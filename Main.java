@@ -9,7 +9,9 @@ import July24.Library;
 import July24Homework.SimpleDatabase.DatabaseUI;
 import July24Homework.StreamApiExample.CityConverter;
 import July24Homework.StreamApiExample.FindPrimeNumber;
+import July25.JDBC;
 
+import java.sql.*;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -17,19 +19,20 @@ public class Main {
     public static void main(String[] args) {
         // System.out.println("Hello World by furkan.yildiz");
 
-        //FindPrimeNumber findPrimeNumber = new FindPrimeNumber(50);
-        //findPrimeNumber.printPrimeNumbers();
 
-        //CityConverter cityConverter = new CityConverter();
-        //cityConverter.run();
-
-        DatabaseUI databaseUI = new DatabaseUI();
-        databaseUI.run();
+        JDBC.run();
 
 
 
-
-        // LambdaExpression.run();
+        /* July24
+         FindPrimeNumber findPrimeNumber = new FindPrimeNumber(50);
+         findPrimeNumber.printPrimeNumbers()
+         CityConverter cityConverter = new CityConverter();
+         cityConverter.run()
+         DatabaseUI databaseUI = new DatabaseUI();
+         databaseUI.run()
+          LambdaExpression.run()
+         */
 
         /* July23 SelfLearning
         LibraryManager libraryManager = new LibraryManager(
