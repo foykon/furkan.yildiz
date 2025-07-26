@@ -1,29 +1,12 @@
-import July23SelfLearning.LibraryBookManagementSystem.BookManager;
-import July23SelfLearning.LibraryBookManagementSystem.LibraryManager;
-import July23SelfLearning.LibraryBookManagementSystem.SetValues;
-import July23SelfLearning.LibraryBookManagementSystem.UserManager;
-import July23SelfLearning.ListSetMap;
-import July24.Book;
-import July24.LambdaExpression;
-import July24.Library;
-import July24Homework.SimpleDatabase.DatabaseUI;
-import July24Homework.StreamApiExample.CityConverter;
-import July24Homework.StreamApiExample.FindPrimeNumber;
-import July25.JDBC;
-import July26SelfLearning.SimpleDatabaseRevised.DataStore;
-import July26SelfLearning.SimpleDatabaseRevised.FileDataStore;
-import July26SelfLearning.SimpleDatabaseRevised.InMemoryDataStore;
-
-import java.sql.*;
-import java.util.Arrays;
-import java.util.Scanner;
+import July26SelfLearning.SqlInjection.SqlInjection;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         // System.out.println("Hello World by furkan.yildiz");
 
 
-
+        SqlInjection sqlQuery = new SqlInjection();
+        sqlQuery.run();
 
 
 
