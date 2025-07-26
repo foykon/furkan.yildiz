@@ -10,19 +10,29 @@ import July24Homework.SimpleDatabase.DatabaseUI;
 import July24Homework.StreamApiExample.CityConverter;
 import July24Homework.StreamApiExample.FindPrimeNumber;
 import July25.JDBC;
+import July26SelfLearning.SimpleDatabaseRevised.DataStore;
+import July26SelfLearning.SimpleDatabaseRevised.InMemoryDataStore;
 
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // System.out.println("Hello World by furkan.yildiz");
 
 
-        JDBC.run();
+        DataStore<Integer, String> stringDataStore  = new InMemoryDataStore<>();
+        stringDataStore.put(1,"5");
+        stringDataStore.put(2,"6",2);
+
+        //Thread.sleep(3000);
+
+        System.out.println(stringDataStore.get(1));
+        System.out.println(stringDataStore.get(2));
 
 
+        //JDBC.run();
 
         /* July24
          FindPrimeNumber findPrimeNumber = new FindPrimeNumber(50);
