@@ -18,5 +18,9 @@ public class DataStoreGenericArray<K, V> {
         return data.get(key);
     }
 
+    public Map<K, DataEntry<V>> getAll(){
+        return data;
+    }
+
 
 }

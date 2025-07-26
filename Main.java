@@ -11,6 +11,7 @@ import July24Homework.StreamApiExample.CityConverter;
 import July24Homework.StreamApiExample.FindPrimeNumber;
 import July25.JDBC;
 import July26SelfLearning.SimpleDatabaseRevised.DataStore;
+import July26SelfLearning.SimpleDatabaseRevised.FileDataStore;
 import July26SelfLearning.SimpleDatabaseRevised.InMemoryDataStore;
 
 import java.sql.*;
@@ -22,15 +23,26 @@ public class Main {
         // System.out.println("Hello World by furkan.yildiz");
 
 
+
+
+
+
+
+
+        /* July26 revised database homework
         DataStore<Integer, String> stringDataStore  = new InMemoryDataStore<>();
         stringDataStore.put(1,"5");
         stringDataStore.put(2,"6",2);
-
-        //Thread.sleep(3000);
-
+        Thread.sleep(3000);
         System.out.println(stringDataStore.get(1));
         System.out.println(stringDataStore.get(2));
-
+        DataStore<Integer, String> db = new FileDataStore<>("datastore.bin");
+        db.put(1, "Ankara");
+        db.put(2, "İstanbul", 2);
+        Thread.sleep(2000);
+        System.out.println(db.get(1));
+        System.out.println(db.get(2));
+         */
 
         //JDBC.run();
 
