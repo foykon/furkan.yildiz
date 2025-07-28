@@ -2,15 +2,13 @@ import July26SelfLearning.SqlInjection.SqlInjection;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        // System.out.println("Hello World by furkan.yildiz");
-
-
-        SqlInjection sqlQuery = new SqlInjection();
-        sqlQuery.run();
+        //System.out.println("Hello World by furkan.yildiz");
 
 
 
 
+        //SqlInjection sqlQuery = new SqlInjection();
+        //sqlQuery.run();
 
         /* July26 revised database homework
         DataStore<Integer, String> stringDataStore  = new InMemoryDataStore<>();
