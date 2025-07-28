@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.example</groupId>
-  <artifactId>FirstServlet</artifactId>
+  <artifactId>UserManagment</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>FirstServlet</name>
+  <name>UserManagment</name>
   <packaging>war</packaging>
 
   <properties>
@@ -36,7 +36,11 @@
         <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
-
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>8.0.33</version> <!-- Son sürümü kontrol edin -->
+      </dependency>
   </dependencies>
 
   <build>
