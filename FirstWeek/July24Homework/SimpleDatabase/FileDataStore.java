@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class FileDataStore implements DataStore {
-    private static final String FILE_PATH = "Files/data_store.txt";
+    private static final String FILE_PATH = "FirstWeek/data_store.txt";
     private static final String SEPARATOR = "=>";
     private static final String TTL_SEPARATOR = ";TTL=";
 
