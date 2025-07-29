@@ -5,15 +5,26 @@ public class User {
     private String name;
     private String surname;
     private int age;
+    private String phone;
+
 
     public User() {
     }
 
-    public User(int id, String name, String email, int age) {
+    public User(int id, String name, String surname, int age, String phone) {
         this.id = id;
         this.name = name;
-        this.surname = email;
+        this.surname = surname;
         this.age = age;
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public int getId() {

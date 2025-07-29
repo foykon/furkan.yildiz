@@ -15,7 +15,7 @@ public class UserRepository implements IUserRepository{
 
     @Override
     public void addUser(User user){
-        String query = "INSERT INTO users (id,name, surname, age) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO users (id,name, surname, age, phone) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -23,6 +23,8 @@ public class UserRepository implements IUserRepository{
             stmt.setString(2, user.getName());
             stmt.setString(3, user.getSurname());
             stmt.setInt(4, user.getAge());
+            stmt.setString(5, user.getPhone());
+
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -39,7 +41,7 @@ public class UserRepository implements IUserRepository{
 
     @Override
     public void updateUser(User user) {
-        String query = "UPDATE users SET name = ?, surname = ?, age = ? WHERE id = ?";
+        String query = "UPDATE users SET name = ?, surname = ?, age = ?, phone = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -47,6 +49,7 @@ public class UserRepository implements IUserRepository{
             stmt.setString(2, user.getSurname());
             stmt.setInt(3, user.getAge());
             stmt.setInt(4, user.getId());
+            stmt.setString(5, user.getPhone());
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated > 0) {
@@ -95,6 +98,7 @@ public class UserRepository implements IUserRepository{
                 user.setName(rs.getString("name"));
                 user.setSurname(rs.getString("surname"));
                 user.setAge(rs.getInt("age"));
+                user.setPhone(rs.getString("phone"));
                 users.add(user);
             }
 
@@ -118,6 +122,7 @@ public class UserRepository implements IUserRepository{
                     user.setName(rs.getString("name"));
                     user.setSurname(rs.getString("surname"));
                     user.setAge(rs.getInt("age"));
+                    user.setPhone(rs.getString("phone"));
                     return user;
                 }
             }

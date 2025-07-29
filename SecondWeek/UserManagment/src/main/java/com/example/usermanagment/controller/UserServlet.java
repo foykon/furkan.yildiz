@@ -48,7 +48,7 @@ public class UserServlet extends HttpServlet {
 
             if (user != null) {
                 resp.getWriter().write(
-                        String.format("{\"id\": %d, \"name\": \"%s\", \"surname\": \"%s\", \"age\": %d}",
+                        String.format("{\"id\": %d, \"name\": \"%s\", \"surname\": \"%s\", \"age\": %d, \"phone\": \"%s\"}",
                                 user.getId(), user.getName(), user.getSurname(), user.getAge()));
             } else {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -65,8 +65,8 @@ public class UserServlet extends HttpServlet {
             StringBuilder json = new StringBuilder("[");
             for (int i = 0; i < users.size(); i++) {
                 User u = users.get(i);
-                json.append(String.format("{\"id\": %d, \"name\": \"%s\", \"surname\": \"%s\", \"age\": %d}",
-                        u.getId(), u.getName(), u.getSurname(), u.getAge()));
+                json.append(String.format("{\"id\": %d, \"name\": \"%s\", \"surname\": \"%s\", \"age\": %d, \"phone\": \"%s\"}",
+                        u.getId(), u.getName(), u.getSurname(), u.getAge(), u.getPhone()));
                 if (i != users.size() - 1) json.append(",");
             }
             json.append("]");
@@ -82,6 +82,7 @@ public class UserServlet extends HttpServlet {
         int id = Integer.parseInt(req.getParameter("id"));
         String name = req.getParameter("name");
         String surname = req.getParameter("surname");
+        String phone = req.getParameter("phone");
         int age = Integer.parseInt(req.getParameter("age"));
 
         User user = new User();
@@ -89,6 +90,7 @@ public class UserServlet extends HttpServlet {
         user.setName(name);
         user.setSurname(surname);
         user.setAge(age);
+        user.setPhone(phone);
 
         userService.updateUser(user);
 
@@ -101,6 +103,7 @@ public class UserServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
 
         String name = req.getParameter("name");
+        String phone = req.getParameter("phone");
         String surname = req.getParameter("surname");
         int age = Integer.parseInt(req.getParameter("age"));
         int id = Integer.parseInt(req.getParameter("id"));
@@ -110,6 +113,7 @@ public class UserServlet extends HttpServlet {
         user.setName(name);
         user.setSurname(surname);
         user.setAge(age);
+        user.setPhone(phone);
 
         userService.addUser(user);
 
