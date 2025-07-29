@@ -36,9 +36,9 @@ public class LoginServlet extends HttpServlet {
         userMap.put("admin", "adminpass");
 
         if (username == null || password == null || !userMap.containsKey(username) || !userMap.get(username).equals(password)) {
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/error");
+
             System.out.println("Redirect to page /error");
-            dispatcher.forward(req, resp);
+            resp.sendRedirect("/error");
             return;
         }
 
