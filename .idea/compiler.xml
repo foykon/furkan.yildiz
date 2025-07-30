@@ -6,8 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="FirstServlet" />
+        <module name="July30SelfLearning" />
         <module name="July29Demo" />
+        <module name="FirstServlet" />
         <module name="UserManagment" />
         <module name="July30Demo" />
       </profile>
