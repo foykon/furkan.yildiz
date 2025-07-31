@@ -10,6 +10,7 @@
         <module name="July29Demo" />
         <module name="FirstServlet" />
         <module name="UserManagment" />
+        <module name="July31Demo" />
         <module name="July30Demo" />
       </profile>
     </annotationProcessing>
