@@ -7,11 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="July30SelfLearning" />
-        <module name="July29Demo" />
         <module name="FirstServlet" />
+        <module name="July31ProjectContactManagment" />
         <module name="UserManagment" />
         <module name="July31Demo" />
         <module name="July30Demo" />
+        <module name="July29Demo" />
       </profile>
     </annotationProcessing>
   </component>
