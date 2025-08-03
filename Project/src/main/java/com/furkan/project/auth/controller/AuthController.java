@@ -9,6 +9,7 @@ import com.furkan.project.auth.dto.response.UserResponse;
 import com.furkan.project.auth.security.JwtTokenProvider;
 import com.furkan.project.auth.service.auth.IAuthService;
 import com.furkan.project.auth.service.user.IUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class AuthController {
 
     // Register endpoint
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
         try {
             UserResponse response = userService.registerUser(
                     request.getUsername(),
@@ -39,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             JwtResponse response = authService.login(request);
             return ResponseEntity.ok(response);
@@ -49,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         try {
             JwtResponse response = authService.refreshToken(request.getRefreshToken());
             return ResponseEntity.ok(response);
