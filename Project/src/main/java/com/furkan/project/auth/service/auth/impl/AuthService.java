@@ -5,6 +5,7 @@ import com.furkan.project.auth.dto.request.LoginRequest;
 import com.furkan.project.auth.dto.response.JwtResponse;
 import com.furkan.project.auth.dto.response.UserResponse;
 import com.furkan.project.auth.entity.User;
+import com.furkan.project.auth.exception.InvalidCredentialsException;
 import com.furkan.project.auth.repository.UserRepository;
 
 import com.furkan.project.auth.security.JwtTokenProvider;
@@ -32,20 +33,22 @@ public class AuthService implements IAuthService {
 
     @Override
     public JwtResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+        } catch (Exception e) {
+            throw new InvalidCredentialsException("Kullanıcı adı veya şifre hatalı.");
+        }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Burada authentication.getPrincipal() UserDetails tipinde ise onu kullan
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                .orElseThrow(() -> new InvalidCredentialsException("Kullanıcı bulunamadı."));
 
         String accessToken = jwtTokenProvider.generateAccessToken(user.getUsername());
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUsername());
@@ -62,13 +65,13 @@ public class AuthService implements IAuthService {
     @Override
     public JwtResponse refreshToken(String refreshToken) {
         if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("Invalid refresh token");
+            throw new InvalidCredentialsException("Geçersiz refresh token.");
         }
 
         String username = jwtTokenProvider.getUsernameFromJwt(refreshToken);
 
         User user = userService.findUserByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new InvalidCredentialsException("Kullanıcı bulunamadı."));
 
         String newAccessToken = jwtTokenProvider.generateAccessToken(username);
 
