@@ -11,7 +11,6 @@
         <module name="July31ProjectContactManagment" />
         <module name="UserManagment" />
         <module name="July31Demo" />
-        <module name="July4" />
         <module name="July30Demo" />
         <module name="July29Demo" />
       </profile>
@@ -23,10 +22,11 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="July5" />
-        <module name="July4SefLearning" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="July4" target="21" />
+      <module name="July4SefLearning" target="21" />
       <module name="project" target="21" />
     </bytecodeTargetLevel>
   </component>

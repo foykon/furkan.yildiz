@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/books/v1")
-public class BookController {
+@RequestMapping("/books/v2")
+public class BookControllerV2 {
+
     private final BookService bookService;
 
-    public BookController(@Qualifier("bookServiceImpl") BookService bookService) {
+    public BookControllerV2(@Qualifier("bookServiceImplWithJpa") BookService bookService) {
         this.bookService = bookService;
     }
-
     @GetMapping
     public List<BookResponse> getAllBooks() {
         return bookService.getAllBooks();
