@@ -18,8 +18,11 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private int id;
+    @Column
     private String title;
+    @Column
     private String author;
+    @Column
     private int pages;
 
 }
