@@ -1,7 +1,9 @@
 package com.furkan.project.auth.exception;
 
+import com.furkan.project.auth.entity.Role;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +37,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse( HttpStatus.CONFLICT.value(), LocalDateTime.now(), "USer already exists", ex.getMessage()));
     }
+    @ExceptionHandler(RoleNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleRoleNotFound(RoleNotFoundException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse( HttpStatus.CONFLICT.value(), LocalDateTime.now(), "Role not found", ex.getMessage()));
+        }
+    @ExceptionHandler(UserNotFoundException.class)
+            public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(new ErrorResponse( HttpStatus.CONFLICT.value(), LocalDateTime.now(), "User not found", ex.getMessage()));
+            }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {

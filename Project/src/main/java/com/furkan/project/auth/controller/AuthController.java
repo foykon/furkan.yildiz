@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final IUserService userService;
     private final IAuthService authService;
 
 
@@ -28,7 +27,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
         try {
-            UserResponse response = userService.registerUser(
+            UserResponse response = authService.registerUser(
                     request.getUsername(),
                     request.getEmail(),
                     request.getPassword()
