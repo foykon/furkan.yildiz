@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> handlerException(HttpServletRequest httpServletRequest, Exception exception){
-        ErrorResponse eRes = ErrorResponse.builder().errorCode(1000L).message("Bilinmeyenm hata").build();
+        ErrorResponse eRes = ErrorResponse.builder().errorCode(1000L).message(exception.getMessage()).build();
 
         return new ResponseEntity<>(eRes, HttpStatus.SERVICE_UNAVAILABLE);
     }

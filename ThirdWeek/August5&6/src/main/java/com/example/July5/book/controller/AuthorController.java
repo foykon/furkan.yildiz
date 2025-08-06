@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/authors/v2")
+@RequestMapping("/authors/v1")
 @RequiredArgsConstructor
 public class AuthorController {
 
@@ -26,20 +26,20 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public AuthorResponse getBookById(@PathVariable int id) {
+    public AuthorResponse getAuthorById(@PathVariable int id) {
         return authorService.getAuthorById(id);
 
     }
 
     @PostMapping
-    public AuthorResponse addBook(@RequestBody AuthorRequest authorRequest) {
+    public AuthorResponse addAuthor(@RequestBody AuthorRequest authorRequest) {
         return authorService.addAuthor(authorRequest);
 
     }
 
 
     @PutMapping("/{id}")
-    public AuthorResponse updateBook(@PathVariable int id, @RequestBody AuthorRequest authorRequest) {
+    public AuthorResponse updateAuthor(@PathVariable int id, @RequestBody AuthorRequest authorRequest) {
         return authorService.updateAuthor(id, authorRequest);
     }
 
