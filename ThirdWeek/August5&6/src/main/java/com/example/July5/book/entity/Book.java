@@ -5,23 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 
 @Data
 @Entity
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "books")
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private int id;
+public class Book extends BaseEntity {
     @Column
     private String title;
-    @Column
-    private String author;
+    @ManyToOne(optional = false)
+    private Author author;
     @Column
     private int pages;
 

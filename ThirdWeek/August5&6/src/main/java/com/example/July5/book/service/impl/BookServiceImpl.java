@@ -46,7 +46,7 @@ public class BookServiceImpl implements BookService {
             throw new BookNotFoundException("Book not found");
         }
         updatedBook.setTitle(bookRequest.getTitle());
-        updatedBook.setAuthor(bookRequest.getAuthor());
+        //updatedBook.setAuthor(bookRequest.getAuthor());
         updatedBook.setPages(bookRequest.getPages());
         return mapBookToResponse(updatedBook);
     }
@@ -74,7 +74,7 @@ public class BookServiceImpl implements BookService {
     private Book mapRequestToBook(BookRequest bookRequest){
         return Book.builder()
                 .title(bookRequest.getTitle())
-                .author(bookRequest.getAuthor())
+                //.author(bookRequest.getAuthor())
                 .pages(bookRequest.getPages())
                 .build();
     }

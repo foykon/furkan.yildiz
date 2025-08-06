@@ -3,6 +3,7 @@ package com.example.July5.book.service.impl;
 import com.example.July5.book.dto.BookRequest;
 import com.example.July5.book.dto.BookResponse;
 import com.example.July5.book.entity.Book;
+import com.example.July5.book.repository.AuthorRepository;
 import com.example.July5.book.repository.BookRepository;
 import com.example.July5.book.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookServiceImplWithJpa implements BookService {
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
     @Override
     public BookResponse addBook(BookRequest bookRequest) {
@@ -33,7 +35,7 @@ public class BookServiceImplWithJpa implements BookService {
     public BookResponse updateBook(int id, BookRequest bookRequest) {
         Book book = bookRepository.findById(id).get();
         book.setTitle(bookRequest.getTitle());
-        book.setAuthor(bookRequest.getAuthor());
+        book.setAuthor(authorRepository.findById(bookRequest.getAuthorId()).get());
         book.setPages(bookRequest.getPages());
         bookRepository.save(book);
 
@@ -63,7 +65,7 @@ public class BookServiceImplWithJpa implements BookService {
     private Book mapRequestToBook(BookRequest bookRequest){
         return Book.builder()
                 .title(bookRequest.getTitle())
-                .author(bookRequest.getAuthor())
+                .author(authorRepository.findById(bookRequest.getAuthorId()).get())
                 .pages(bookRequest.getPages())
                 .build();
     }

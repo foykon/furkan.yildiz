@@ -10,6 +10,6 @@ import lombok.Data;
 public class BookRequest {
         @NotBlank
         private String title;
-        private String author;
+        private int authorId;
         private int pages;
 }
