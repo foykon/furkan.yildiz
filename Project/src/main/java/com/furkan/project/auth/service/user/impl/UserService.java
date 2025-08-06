@@ -1,11 +1,16 @@
 package com.furkan.project.auth.service.user.impl;
 
+import com.furkan.project.auth.dto.request.RoleRequest;
+import com.furkan.project.auth.dto.request.RoleRequests;
 import com.furkan.project.auth.dto.request.UserFilterRequest;
 import com.furkan.project.auth.dto.request.UserRequest;
+import com.furkan.project.auth.dto.response.RoleResponse;
 import com.furkan.project.auth.dto.response.UserResponse;
 import com.furkan.project.auth.entity.ERole;
 import com.furkan.project.auth.entity.Role;
 import com.furkan.project.auth.entity.User;
+import com.furkan.project.auth.exception.InvalidCredentialsException;
+import com.furkan.project.auth.exception.RoleNotFoundException;
 import com.furkan.project.auth.exception.UserNotFoundException;
 import com.furkan.project.auth.filter.UserSpecifications;
 import com.furkan.project.auth.repository.RoleRepository;
@@ -23,10 +28,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,9 +46,24 @@ public class UserService implements IUserService {
 
         User user = requestToUser(userRequest);
 
-        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException(messageService.get("role.not-found")));
-        user.getRoles().add(userRole);
+        if (userRequest.getRoles() != null && !userRequest.getRoles().isEmpty()) {
+            for (String roleName : userRequest.getRoles().stream().map(RoleRequest::getName).collect(Collectors.toList())) {
+                ERole roleEnum;
+                try {
+                    roleEnum = ERole.valueOf(roleName.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new InvalidCredentialsException(messageService.get("role.invalid") + ": " + roleName);
+                }
+
+                Role role = roleRepository.findByName(roleEnum)
+                        .orElseThrow(() -> new RoleNotFoundException(messageService.get("role.not-found")));
+                user.getRoles().add(role);
+            }
+        } else {
+            Role defaultRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RoleNotFoundException(messageService.get("role.not-found")));
+            user.getRoles().add(defaultRole);
+        }
 
         userRepository.save(user);
 
@@ -141,6 +158,30 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username);
     }
 
+    @Override
+    public DataResult<UserResponse> addRoleToUser(long id, RoleRequests roleRequests) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(messageService.get("user.notfound")));
+
+        if (roleRequests == null || roleRequests.getRoleRequests().isEmpty()) {
+            throw new RuntimeException(messageService.get("role.empty"));
+        }
+
+        Set<Role> rolesToAdd = roleRequests.getRoleRequests().stream()
+                .map(RoleRequest::getName)
+                .map(ERole::valueOf)
+                .map(roleEnum -> roleRepository.findByName(roleEnum)
+                        .orElseThrow(() -> new RuntimeException(messageService.get("role.not-found"))))
+                .collect(Collectors.toSet());
+
+        user.getRoles().addAll(rolesToAdd);
+        userRepository.save(user);
+
+        return new SuccessDataResult<>(userToUserResponse(user), messageService.get("role.added"));
+    }
+
+
+
     private void assignDefaultRole(User user) {
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException(messageService.get("role.not-found")));
@@ -162,6 +203,15 @@ public class UserService implements IUserService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .isEnabled(user.isEnabled())
+                .roles(
+                        user.getRoles().stream()
+                                .map(role -> RoleResponse.builder()
+                                        .id(role.getId())
+                                        .name(role.getName().name())
+                                        .build()
+                                )
+                                .collect(Collectors.toSet())
+                )
                 .build();
     }
 

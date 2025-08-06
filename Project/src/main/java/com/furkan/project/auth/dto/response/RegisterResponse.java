@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Data
 @Builder
-public class UserResponse {
+public class RegisterResponse {
     private Long id;
     private String username;
     private String email;

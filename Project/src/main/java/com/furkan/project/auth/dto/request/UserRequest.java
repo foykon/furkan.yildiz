@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 @Builder
 public class UserRequest {
@@ -21,5 +23,7 @@ public class UserRequest {
     @NotBlank(message = "Email cannot be empty!")
     @Email(message = "Email must be valid!")
     private String email;
+
+    private Set<RoleRequest> roles;
 
 }

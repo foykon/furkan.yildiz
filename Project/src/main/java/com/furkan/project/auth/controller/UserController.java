@@ -1,5 +1,7 @@
 package com.furkan.project.auth.controller;
 
+import com.furkan.project.auth.dto.request.RoleRequest;
+import com.furkan.project.auth.dto.request.RoleRequests;
 import com.furkan.project.auth.dto.request.UserFilterRequest;
 import com.furkan.project.auth.dto.request.UserRequest;
 import com.furkan.project.auth.dto.response.UserResponse;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import java.util.Set;
 
 import java.util.List;
 
@@ -53,4 +56,12 @@ public class UserController {
     public ResponseEntity<DataResult<List<UserResponse>>> getAllUsers(@ModelAttribute UserFilterRequest filterRequest) {
         return ResponseEntity.ok(userService.getAllUsers(filterRequest));
     }
+
+    @PostMapping("/add-role/{id}")
+    @ResponseBody
+    public ResponseEntity<DataResult<UserResponse>> addRoleToUser(@PathVariable long id, @RequestBody @Validated RoleRequests request) {
+        return ResponseEntity.ok(userService.addRoleToUser(id, request));
+    }
+
+
 }
