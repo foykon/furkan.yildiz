@@ -1,10 +1,7 @@
 package com.furkan.project.auth.controller;
 
 
-import com.furkan.project.auth.dto.request.LoginRequest;
-import com.furkan.project.auth.dto.request.RegisterRequest;
-import com.furkan.project.auth.dto.request.TokenRefreshRequest;
-import com.furkan.project.auth.dto.request.UserRequest;
+import com.furkan.project.auth.dto.request.*;
 import com.furkan.project.auth.dto.response.JwtResponse;
 import com.furkan.project.auth.dto.response.RegisterResponse;
 import com.furkan.project.auth.dto.response.UserResponse;
@@ -18,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,11 +35,14 @@ public class AuthController {
             return ResponseEntity.ok(authService.login(request));
 
     }
-
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody TokenRequest tokenRequest) {
+        return ResponseEntity.ok(authService.logout(tokenRequest.getRefreshToken()));
+    }
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-                return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
-
+    public ResponseEntity<DataResult<JwtResponse>> refreshToken(@RequestBody Map<String, String> body) {
+        String refreshToken = body.get("refreshToken");
+        return ResponseEntity.ok(authService.refreshToken(refreshToken));
     }
 
 }
