@@ -21,16 +21,17 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
+        <module name="July5" />
         <module name="project" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="August5SelfLearning" target="21" />
-      <module name="July5" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="July5" options="-parameters" />
       <module name="project" options="-parameters" />
     </option>
   </component>
