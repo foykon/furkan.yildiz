@@ -2,20 +2,59 @@ package com.example.July5.book.service.impl;
 
 import com.example.July5.book.dto.AuthorRequest;
 import com.example.July5.book.dto.AuthorResponse;
-import com.example.July5.book.dto.BookRequest;
-import com.example.July5.book.dto.BookResponse;
+import com.example.July5.book.dto.AuthorSerachRequest;
 import com.example.July5.book.entity.Author;
-import com.example.July5.book.entity.Book;
 import com.example.July5.book.repository.AuthorRepository;
 import com.example.July5.book.service.AuthorService;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+
+
 @Service
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
+
+
+
     private final AuthorRepository authorRepository;
+
+    @Override
+    public List<AuthorResponse> searchAuthors(AuthorSerachRequest authorSerachRequest) {
+        Specification<Author> specification = (root, query, criteriaBuilder)->{
+            List<Predicate> predicates = new ArrayList<>();
+            if(authorSerachRequest.getName() != null && !authorSerachRequest.getName().isEmpty()) {
+                predicates.add(
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("name")),
+                                "%" + authorSerachRequest.getName().toLowerCase() + "%"
+                        )
+                );
+            }
+
+            if(authorSerachRequest.getSurname() != null && !authorSerachRequest.getSurname().isEmpty()) {
+                predicates.add(
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("surname")),
+                                "%" + authorSerachRequest.getSurname().toLowerCase() + "%"
+
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+
+
+        };
+        return authorRepository.findAll(specification).stream().map(this::mapAuthorToResponse).toList();
+
+
+
+    }
 
     @Override
     public AuthorResponse addAuthor(AuthorRequest authorRequest) {

@@ -31,13 +31,26 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        RefreshToken token = RefreshToken.builder()
-                .user(user)
-                .token(UUID.randomUUID().toString())
-                .expiryDate(LocalDateTime.now().plus(Duration.ofMillis(refreshTokenDurationMs)))
-                .build();
+        Optional<RefreshToken> existingTokenOpt = refreshTokenRepository.findByUserId(user.getId());
 
-        return refreshTokenRepository.save(token).getToken();
+        String newTokenString = UUID.randomUUID().toString();
+        LocalDateTime newExpiryDate = LocalDateTime.now().plus(Duration.ofMillis(refreshTokenDurationMs));
+
+        if (existingTokenOpt.isPresent()) {
+            RefreshToken existingToken = existingTokenOpt.get();
+            existingToken.setToken(newTokenString);
+            existingToken.setExpiryDate(newExpiryDate);
+            refreshTokenRepository.save(existingToken);
+        } else {
+            RefreshToken token = RefreshToken.builder()
+                    .user(user)
+                    .token(newTokenString)
+                    .expiryDate(newExpiryDate)
+                    .build();
+            refreshTokenRepository.save(token);
+        }
+
+        return newTokenString;
     }
 
     @Override

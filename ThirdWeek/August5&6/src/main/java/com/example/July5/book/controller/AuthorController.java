@@ -1,9 +1,6 @@
 package com.example.July5.book.controller;
 
-import com.example.July5.book.dto.AuthorRequest;
-import com.example.July5.book.dto.AuthorResponse;
-import com.example.July5.book.dto.BookRequest;
-import com.example.July5.book.dto.BookResponse;
+import com.example.July5.book.dto.*;
 import com.example.July5.book.service.AuthorService;
 import com.example.July5.book.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +16,11 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
+
+    @GetMapping("/search")
+    public List<AuthorResponse> searchAuthors(@ModelAttribute AuthorSerachRequest authorRequest) {
+        return authorService. searchAuthors(authorRequest);
+    }
 
     @GetMapping
     public List<AuthorResponse> getAllAuthors() {
