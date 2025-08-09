@@ -143,7 +143,7 @@ public class UserService implements IUserService {
 
         return new PagedDataResult<>(
                 responses,
-                resultPage.getTotalElements(),
+                (int)resultPage.getTotalElements(),
                 resultPage.getTotalPages(),
                 resultPage.getNumber(),
                 resultPage.getSize(),

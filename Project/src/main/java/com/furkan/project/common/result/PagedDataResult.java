@@ -14,43 +14,35 @@ public class PagedDataResult<T> extends DataResult<List<T>> {
     private int currentPage;
     private int pageSize;
 
-    public PagedDataResult(List<T> data, long totalElements, int totalPages, int currentPage, int pageSize, String message) {
-        super(data, true, message);
-        this.totalElements = totalElements;
-        this.totalPages = totalPages;
+    /**
+     * @param data          Sayfadaki öğeler
+     * @param currentPage   0-based current page
+     * @param pageSize      page size
+     * @param totalElements toplam kayıt sayısı
+     * @param totalPages    toplam sayfa sayısı
+     * @param success       işlem sonucu
+     * @param message       mesaj/anahtar
+     */
+    public PagedDataResult(List<T> data,
+                           int currentPage,
+                           int pageSize,
+                           long totalElements,
+                           int totalPages,
+                           boolean success,
+                           String message) {
+        super(data, success, message);
         this.currentPage = currentPage;
         this.pageSize = pageSize;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public int getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(int totalPages) {
+        this.totalElements = totalElements;
         this.totalPages = totalPages;
     }
 
-    public long getTotalElements() {
-        return totalElements;
-    }
-
-    public void setTotalElements(long totalElements) {
-        this.totalElements = totalElements;
+    public PagedDataResult(List<T> data,
+                           int currentPage,
+                           int pageSize,
+                           long totalElements,
+                           int totalPages,
+                           String message) {
+        this(data, currentPage, pageSize, totalElements, totalPages, true, message);
     }
 }

@@ -14,7 +14,7 @@
         <module name="July30Demo" />
         <module name="July29Demo" />
       </profile>
-      <profile name="Annotation profile for CourseApp" enabled="true">
+      <profile name="Annotation profile for project" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
