@@ -47,7 +47,7 @@ public class UserService implements IUserService {
         User user = requestToUser(userRequest);
 
         if (userRequest.getRoles() != null && !userRequest.getRoles().isEmpty()) {
-            for (String roleName : userRequest.getRoles().stream().map(RoleRequest::getName).collect(Collectors.toList())) {
+            for (String roleName : userRequest.getRoles().stream().map(RoleRequest::getName).toList()) {
                 ERole roleEnum;
                 try {
                     roleEnum = ERole.valueOf(roleName.toUpperCase());

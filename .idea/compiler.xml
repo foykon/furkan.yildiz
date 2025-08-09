@@ -14,7 +14,7 @@
         <module name="July30Demo" />
         <module name="July29Demo" />
       </profile>
-      <profile name="Annotation profile for project" enabled="true">
+      <profile name="Annotation profile for CourseApp" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -23,6 +23,7 @@
         </processorPath>
         <module name="July5" />
         <module name="project" />
+        <module name="CourseApp" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -31,6 +32,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="CourseApp" options="-parameters" />
       <module name="July5" options="-parameters" />
       <module name="project" options="-parameters" />
     </option>
