@@ -1,7 +1,6 @@
 package com.furkan.project.user.mapper;
 
 import com.furkan.project.user.dto.request.UserCreateRequest;
-import com.furkan.project.user.dto.*;
 import com.furkan.project.user.dto.request.UserUpdateRequest;
 import com.furkan.project.user.dto.response.RoleResponse;
 import com.furkan.project.user.dto.response.UserResponse;

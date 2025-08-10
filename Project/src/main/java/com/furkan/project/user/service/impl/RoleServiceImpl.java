@@ -1,12 +1,12 @@
 package com.furkan.project.user.service.impl;
 
-import com.furkan.project.auth.exception.RoleNotFoundException;
 import com.furkan.project.common.result.DataResult;
 import com.furkan.project.common.result.SuccessDataResult;
 import com.furkan.project.common.service.MessageService;
 import com.furkan.project.user.dto.response.RoleResponse;
 import com.furkan.project.user.entity.ERole;
 import com.furkan.project.user.entity.Role;
+import com.furkan.project.user.exception.RoleNotFoundException;
 import com.furkan.project.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
