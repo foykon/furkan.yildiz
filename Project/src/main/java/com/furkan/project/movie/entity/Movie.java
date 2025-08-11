@@ -67,4 +67,8 @@ public class Movie extends SoftDeletableEntity {
     @Builder.Default
     private Set<Country> countries = new HashSet<>();
 
+
+    @Column(name = "poster_url")
+    private String posterUrl;
+
 }
