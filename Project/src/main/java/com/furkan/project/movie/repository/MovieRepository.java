@@ -5,7 +5,9 @@ import com.furkan.project.movie.entity.Movie;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
 
@@ -15,4 +17,13 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
     Optional<Movie> findDetailById(@Param("id") Long id);
 
     boolean existsByTitleIgnoreCase(String title);
+
+    @Query("""
+        select m.id
+        from Movie m
+        where m.id in :ids
+          and lower(m.title) like lower(concat('%', :q, '%'))
+    """)
+    Set<Long> findIdsByIdInAndTitleLikeIgnoreCase(@Param("ids") Collection<Long> ids,
+                                                  @Param("q") String q);
 }

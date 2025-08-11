@@ -8,41 +8,38 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
+
 public interface UserListItemRepository extends JpaRepository<UserListItem, Long>, JpaSpecificationExecutor<UserListItem> {
 
     boolean existsByUserIdAndMovieIdAndTypeAndDeletedFalse(Long userId, Long movieId, ListType type);
 
     Optional<UserListItem> findByUserIdAndMovieIdAndTypeAndDeletedFalse(Long userId, Long movieId, ListType type);
 
-    @Query("""
-      select new com.furkan.project.list.dto.response.ListItemResponse(
-         m.id, m.title, m.posterUrl, FUNCTION('YEAR', m.releaseDate),
-         li.type, li.createdAt, li.orderIndex)
-      from UserListItem li
-      join li.movie m
-      where li.user.id = :userId and li.type = :type
-        and (:q is null or lower(m.title) like lower(concat('%', :q, '%')))
-      order by coalesce(li.orderIndex, 2147483647), li.createdAt desc
-    """)
-    Page<ListItemResponse> findList(Long userId, ListType type, String q, Pageable pageable);
+    Page<UserListItem> findByUserIdAndTypeAndDeletedFalse(Long userId, ListType type, Pageable pageable);
 
     @Query("""
-      select new com.furkan.project.list.dto.response.ListItemResponse(
-         m.id, m.title, m.posterUrl, FUNCTION('YEAR', m.releaseDate),
-         li.type, li.createdAt, li.orderIndex)
+      select li.movieId
       from UserListItem li
-      join li.movie m
-      where li.user.id = :userId and li.movie.id = :movieId and li.type = :type
+      where li.userId = :userId and li.type = :type and li.deleted = false
     """)
-    Optional<ListItemResponse> findOneItem(Long userId, Long movieId, ListType type);
+    List<Long> findMovieIdsByUserAndType(@Param("userId") Long userId, @Param("type") ListType type);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update UserListItem li set li.deleted = true where li.user.id = :userId and li.movie.id = :movieId and li.type = :type and li.deleted = false")
-    int softDeleteOne(Long userId, Long movieId, ListType type);
+    @Query("""
+      update UserListItem li set li.deleted = true
+      where li.userId = :userId and li.movieId = :movieId and li.type = :type and li.deleted = false
+    """)
+    int softDeleteOne(@Param("userId") Long userId,
+                      @Param("movieId") Long movieId,
+                      @Param("type") ListType type);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update UserListItem li set li.deleted = true where li.user.id = :userId and li.type = :type and li.deleted = false")
-    int softDeleteAll(Long userId, ListType type);
+    @Query("""
+      update UserListItem li set li.deleted = true
+      where li.userId = :userId and li.type = :type and li.deleted = false
+    """)
+    int softDeleteAll(@Param("userId") Long userId, @Param("type") ListType type);
 }
 

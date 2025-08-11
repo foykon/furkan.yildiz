@@ -13,9 +13,7 @@ import org.springframework.data.domain.Pageable;
 public interface ListService {
     DataResult<ListItemResponse> addToList(Long userId, AddListItemRequest req);
     Result removeFromList(Long userId, Long movieId, ListType type);
-
     PagedDataResult<ListItemResponse> getList(Long userId, ListType type, ListFilterRequest filter, Pageable pageable);
-
     Result reorder(Long userId, ReorderRequest request);
     Result clear(Long userId, ListType type);
     DataResult<Boolean> contains(Long userId, Long movieId, ListType type);

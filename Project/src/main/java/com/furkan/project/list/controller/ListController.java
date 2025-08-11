@@ -1,4 +1,4 @@
-package com.furkan.project.list.web;
+package com.furkan.project.list.controller;
 
 import com.furkan.project.common.result.DataResult;
 import com.furkan.project.common.result.PagedDataResult;
@@ -9,8 +9,7 @@ import com.furkan.project.list.dto.request.ReorderRequest;
 import com.furkan.project.list.dto.response.ListItemResponse;
 import com.furkan.project.list.entity.ListType;
 import com.furkan.project.list.service.ListService;
-import com.furkan.project.user.entity.User;
-import com.furkan.project.user.repository.UserRepository;
+import com.furkan.project.user.api.UserApiService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ListController {
 
     private final ListService listService;
-    private final UserRepository userRepository; // /me için username -> id
+    private final UserApiService userApi;
 
     // ---- Me: token sahibinin listesi ----
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -102,8 +101,10 @@ public class ListController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "auth.required");
         }
         String username = principal.getUsername();
-        return userRepository.findByUsername(username)
-                .map(User::getId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "user.notfound"));
+        Long userId = userApi.findIdByUsername(username); // <-- AŞAĞIDAKİ notu gör
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "user.notfound");
+        }
+        return userId;
     }
 }
