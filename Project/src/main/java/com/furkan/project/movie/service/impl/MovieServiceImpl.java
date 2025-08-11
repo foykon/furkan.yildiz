@@ -87,6 +87,8 @@ public class MovieServiceImpl implements MovieService {
                 countryId(filter.getCountryId()),
                 countryIds(filter.getCountryIds()),
                 statusEq(filter.getStatus()),
+                ratingGte(filter.getMinRating()),
+                ratingLte(filter.getMaxRating()),
                 contentRatingEq(filter.getContentRating()),
                 releaseDateBetween(filter.getReleaseDateFrom(), filter.getReleaseDateTo())
         );
@@ -167,6 +169,9 @@ public class MovieServiceImpl implements MovieService {
         if (movieRequest.getDuration() != null)       movie.setDuration(movieRequest.getDuration());
         if (movieRequest.getStatus() != null)         movie.setStatus(movieRequest.getStatus());
         if (movieRequest.getContentRating() != null)  movie.setContentRating(movieRequest.getContentRating());
+        if (movieRequest.getImageUrl() != null)       movie.setImageUrl(movieRequest.getImageUrl());
+        if (movieRequest.getRating() != null)         movie.setRating(movieRequest.getRating());
+
     }
 
     private void applyRelations(Movie movie, MovieRequest movieRequest) {
@@ -230,6 +235,10 @@ public class MovieServiceImpl implements MovieService {
         response.setDuration(movie.getDuration());
         response.setStatus(movie.getStatus());
         response.setContentRating(movie.getContentRating());
+        response.setImageUrl(movie.getImageUrl());
+        response.setContentRating(movie.getContentRating());
+        response.setRating(movie.getRating());
+
 
         if (movie.getDirector() != null) {
             response.setDirectorId(movie.getDirector().getId());

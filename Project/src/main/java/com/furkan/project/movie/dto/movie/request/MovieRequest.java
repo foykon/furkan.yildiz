@@ -5,6 +5,7 @@ import com.furkan.project.movie.entity.MovieStatus;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ public class MovieRequest {
     private String description;
     private LocalDate releaseDate;
     private Integer duration;
+    private String imageUrl;
+    private BigDecimal rating;
 
     private MovieStatus status;
     private ContentRating contentRating;

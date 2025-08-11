@@ -4,6 +4,7 @@ import com.furkan.project.common.entity.SoftDeletableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,8 +26,9 @@ public class Movie extends SoftDeletableEntity {
 
     private LocalDate releaseDate;
 
-    private double rating;
+    private BigDecimal rating;
 
+    private String imageUrl;
 
     private Integer duration;
 
@@ -66,9 +68,5 @@ public class Movie extends SoftDeletableEntity {
             inverseJoinColumns = @JoinColumn(name = "country_id"))
     @Builder.Default
     private Set<Country> countries = new HashSet<>();
-
-
-    @Column(name = "poster_url")
-    private String posterUrl;
 
 }

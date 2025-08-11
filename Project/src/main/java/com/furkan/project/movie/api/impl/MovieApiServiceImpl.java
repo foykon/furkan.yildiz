@@ -48,6 +48,6 @@ public class MovieApiServiceImpl implements MovieApiService {
 
     private MovieSummary toSummary(Movie m) {
         Integer year = (m.getReleaseDate() != null) ? m.getReleaseDate().getYear() : null;
-        return new MovieSummary(m.getId(), m.getTitle(), m.getPosterUrl(), year);
+        return new MovieSummary(m.getId(), m.getTitle(), m.getImageUrl(), year);
     }
 }

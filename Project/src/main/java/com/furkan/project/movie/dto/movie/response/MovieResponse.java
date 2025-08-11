@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ public class MovieResponse {
     private Integer duration;
     private MovieStatus status;
     private ContentRating contentRating;
+    private String imageUrl;
+    private BigDecimal rating;
 
     private Long directorId;
     private String directorName;

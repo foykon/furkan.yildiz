@@ -4,6 +4,7 @@ import com.furkan.project.movie.entity.Movie;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 public final class MovieSpecifications {
@@ -31,7 +32,14 @@ public final class MovieSpecifications {
             return cb.equal(genres.get("id"), genreId);
         };
     }
-
+    public static Specification<Movie> ratingGte(BigDecimal min) {
+        if (min == null) return null;
+        return (root, q, cb) -> cb.greaterThanOrEqualTo(root.get("rating"), min);
+    }
+    public static Specification<Movie> ratingLte(BigDecimal max) {
+        if (max == null) return null;
+        return (root, q, cb) -> cb.lessThanOrEqualTo(root.get("rating"), max);
+    }
     public static Specification<Movie> genreIds(Set<Long> ids) {
         if (ids == null || ids.isEmpty()) return null;
         return (root, q, cb) -> {
