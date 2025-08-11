@@ -1,0 +1,108 @@
+[33m52c101a[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{0}: commit: commit and push fix
+[33mc0746a6[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{1}: commit: commit and push fix
+[33me530c86[m HEAD@{2}: checkout: moving from da8880940646f069f0535d4f440f8166d0106bf8 to master
+[33mda88809[m HEAD@{3}: checkout: moving from master to da8880940646f069f0535d4f440f8166d0106bf8
+[33me530c86[m HEAD@{4}: commit: commit and push fix
+[33mda88809[m HEAD@{5}: checkout: moving from fcb83092a7cda294ca9a40277df1318d3c3daee3 to master
+[33mfcb8309[m HEAD@{6}: checkout: moving from dd3b22c0d011bda9245fc0f1171b0f5e968f1cf7 to fcb83092a7cda294ca9a40277df1318d3c3daee3
+[33mdd3b22c[m HEAD@{7}: checkout: moving from master to dd3b22c0d011bda9245fc0f1171b0f5e968f1cf7
+[33mda88809[m HEAD@{8}: checkout: moving from project to master
+[33m8a09233[m[33m ([m[1;32mproject-auth[m[33m, [m[1;32mproject[m[33m)[m HEAD@{9}: checkout: moving from project-auth to project
+[33m8a09233[m[33m ([m[1;32mproject-auth[m[33m, [m[1;32mproject[m[33m)[m HEAD@{10}: checkout: moving from master to project-auth
+[33mda88809[m HEAD@{11}: reset: moving to da8880940646f069f0535d4f440f8166d0106bf8
+[33m4ae1839[m HEAD@{12}: commit: commit and push fix
+[33m2bfa76a[m HEAD@{13}: commit: connected backed to front. login page router and navbar created basic list and sort things added
+[33mda88809[m HEAD@{14}: commit: add auth module with CRUD endpoints and database seed scripts
+[33mdd3b22c[m HEAD@{15}: commit: add core user module with CRUD endpoints and database seed scripts
+[33mef2687b[m HEAD@{16}: commit: add core movie module with CRUD endpoints and database seed scripts
+[33m86f781e[m HEAD@{17}: commit: 7 august classexamples
+[33mfcb8309[m HEAD@{18}: commit: filters added to book
+[33m3e0119f[m HEAD@{19}: commit: refreshtoken connected to db
+[33m81a0f60[m HEAD@{20}: commit: authsrvice refreshed
+[33m90ce502[m HEAD@{21}: commit (merge): Merge branch 'project'
+[33mf8489d7[m HEAD@{22}: checkout: moving from project to master
+[33m8a09233[m[33m ([m[1;32mproject-auth[m[33m, [m[1;32mproject[m[33m)[m HEAD@{23}: merge project-auth: Fast-forward
+[33mdfffb15[m HEAD@{24}: checkout: moving from project-auth to project
+[33m8a09233[m[33m ([m[1;32mproject-auth[m[33m, [m[1;32mproject[m[33m)[m HEAD@{25}: checkout: moving from project to project-auth
+[33mdfffb15[m HEAD@{26}: checkout: moving from project-auth to project
+[33m8a09233[m[33m ([m[1;32mproject-auth[m[33m, [m[1;32mproject[m[33m)[m HEAD@{27}: commit: add role method and user connected to rle wtih auth updated
+[33mba224c8[m HEAD@{28}: commit: user api ready just connect to roles
+[33m7459b0b[m HEAD@{29}: commit: result class
+[33m3eb05f7[m HEAD@{30}: commit: Dto s fixed
+[33md67c3f9[m HEAD@{31}: checkout: moving from master to project-auth
+[33mf8489d7[m HEAD@{32}: checkout: moving from project-auth to master
+[33md67c3f9[m HEAD@{33}: checkout: moving from master to project-auth
+[33mf8489d7[m HEAD@{34}: checkout: moving from project-auth to master
+[33md67c3f9[m HEAD@{35}: checkout: moving from master to project-auth
+[33mf8489d7[m HEAD@{36}: commit: august6 class examples interceptors filters and more
+[33mfa1b6fa[m HEAD@{37}: commit: new entitiy author and connected each with many to one
+[33me94f020[m HEAD@{38}: commit: Topics were repeated, JPA DTO was used, and filtering, sorting and pagination operations were added.
+[33m9a0ae0b[m HEAD@{39}: commit: book connected to jpa
+[33mf5eec64[m HEAD@{40}: commit: August file and folder fixed. they was july
+[33m47a4795[m HEAD@{41}: commit: August 5 class examples
+[33md2b4c62[m HEAD@{42}: commit: july5 class examples
+[33m5bdb46f[m HEAD@{43}: commit: July4 self learning, trying get and post requests types. taking params diff ways and used mvc. used log4j2
+[33m2077937[m HEAD@{44}: commit: calculator example to learn bean anatotions
+[33m78f2235[m HEAD@{45}: checkout: moving from project-auth to master
+[33md67c3f9[m HEAD@{46}: commit: role serv and cont2
+[33mc7e2a4f[m HEAD@{47}: commit: role serv and cont
+[33m6f833e0[m HEAD@{48}: commit: exception handling and role
+[33m7d873b3[m HEAD@{49}: checkout: moving from master to project-auth
+[33m78f2235[m HEAD@{50}: checkout: moving from project to master
+[33mdfffb15[m HEAD@{51}: checkout: moving from project-auth to project
+[33m7d873b3[m HEAD@{52}: commit: validation
+[33m7bcbce0[m HEAD@{53}: checkout: moving from master to project-auth
+[33m78f2235[m HEAD@{54}: checkout: moving from project-auth to master
+[33m7bcbce0[m HEAD@{55}: commit: test controller and role based auth added
+[33m9673bb0[m HEAD@{56}: commit: login refreshtoken and register added
+[33mdfffb15[m HEAD@{57}: checkout: moving from project to project-auth
+[33mdfffb15[m HEAD@{58}: commit: first step to project
+[33m78f2235[m HEAD@{59}: checkout: moving from master to project
+[33m78f2235[m HEAD@{60}: commit: contactmanager with all we learnt
+[33m15f8702[m HEAD@{61}: commit: filter usage example
+[33m05401da[m HEAD@{62}: commit: sessions usage example
+[33m6b6b156[m HEAD@{63}: commit: project misterybox cookie, get,post and redirect july30selflearining
+[33m4fec728[m HEAD@{64}: commit: folders revised
+[33m1ef5d51[m HEAD@{65}: commit: login auth with forms and cookie
+[33m88e5a53[m HEAD@{66}: commit: thread and porcess
+[33m7b9412e[m HEAD@{67}: commit: jsp include exercise
+[33mc44ebf2[m HEAD@{68}: commit: jsp exercise
+[33ma49d8da[m HEAD@{69}: commit: jsp exercise
+[33m6cfa440[m HEAD@{70}: commit: redirect and forward example with LoginServlet 3
+[33m828ee06[m HEAD@{71}: commit: redirect and forward example with LoginServlet 2
+[33m1ffce68[m HEAD@{72}: commit: redirect and forward example with LoginServlet
+[33md378ecb[m HEAD@{73}: commit: phone added for calss example
+[33m1519abb[m HEAD@{74}: commit: phone added for calss example
+[33meb08870[m HEAD@{75}: commit: telephone user project. Done with class
+[33m0e8445d[m HEAD@{76}: commit: usermanagmnet API july28selflearning
+[33m050175f[m HEAD@{77}: commit: July28 class notes
+[33mf14cbb9[m HEAD@{78}: commit: folder config 2
+[33m3195c2a[m HEAD@{79}: commit: folder and run configuration
+[33m29cba83[m HEAD@{80}: commit: first tomcat servlet project created
+[33m9f3aa83[m HEAD@{81}: checkout: moving from week2 to master
+[33m6aa9122[m HEAD@{82}: checkout: moving from master to week2
+[33m9f3aa83[m HEAD@{83}: commit: sql injection examples
+[33m842406f[m HEAD@{84}: commit: File database revised
+[33mbadb614[m HEAD@{85}: commit: InMemoryDataStore revised version
+[33m587ef6f[m HEAD@{86}: commit: july25 class notes
+[33m773d1bb[m HEAD@{87}: commit: FileDataStore created and implment the program
+[33m0faac53[m HEAD@{88}: commit: another inline return for prime number problem
+[33meb9b04b[m HEAD@{89}: commit: list to map converter for cityLister
+[33m7f8f596[m HEAD@{90}: commit: prime number finder
+[33m395d27e[m HEAD@{91}: commit: InMemoryDataStore created @july24homework
+[33m40417c1[m HEAD@{92}: commit: July24 class notes
+[33mbd6cbff[m HEAD@{93}: commit: Library Management example using list and set.
+[33m41d725b[m HEAD@{94}: commit: List, Set, Map example
+[33mb86bfb0[m HEAD@{95}: commit: Day 3 class notes
+[33m7b48778[m HEAD@{96}: commit: E-Commerce discount example.
+[33mdf34ac0[m HEAD@{97}: commit: A geometric field calculation application that will run on the console.
+[33mc9e32d4[m HEAD@{98}: commit: instead of using intenceof. inheritence implemented
+[33m93a90a6[m HEAD@{99}: commit: instead of using intenceof. inheritence implemented
+[33meb38042[m HEAD@{100}: commit: bus overriding and inheritance
+[33m5ef0ad5[m HEAD@{101}: commit: bus capacity control insertingPassenger about bus problem
+[33ma5b24d3[m HEAD@{102}: commit: null control insertingPassenger about bus problem
+[33m8917a9c[m HEAD@{103}: commit: bus and passenger problem
+[33mbf5cfc4[m HEAD@{104}: commit: bus and passenger problem
+[33m3711395[m HEAD@{105}: commit: Pen and shape problem and folder added
+[33med7e3b2[m HEAD@{106}: commit: array problem solved
+[33m46ee29d[m HEAD@{1
