@@ -8,16 +8,17 @@ import com.furkan.project.movie.dto.language.LanguageRequest;
 import com.furkan.project.movie.service.LanguageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/languages")
+@RequestMapping(value = "/api/v1/languages", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class LanguageController {
 
     private final LanguageService languageService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<LanguageResponse> create(@RequestBody LanguageRequest request) {
         return languageService.create(request);
     }
@@ -32,7 +33,7 @@ public class LanguageController {
         return languageService.list(q, pageable);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<LanguageResponse> update(@PathVariable Long id, @RequestBody LanguageRequest request) {
         return languageService.update(id, request);
     }

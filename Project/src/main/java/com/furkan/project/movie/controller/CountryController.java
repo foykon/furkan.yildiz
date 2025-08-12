@@ -8,16 +8,19 @@ import com.furkan.project.movie.dto.country.CountryRequest;
 import com.furkan.project.movie.service.CountryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/countries")
+@RequestMapping(value = "/api/v1/countries",
+        produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class CountryController {
 
     private final CountryService countryService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+
     public DataResult<CountryResponse> create(@RequestBody CountryRequest request) {
         return countryService.create(request);
     }
@@ -32,7 +35,7 @@ public class CountryController {
         return countryService.list(q, pageable);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<CountryResponse> update(@PathVariable Long id, @RequestBody CountryRequest request) {
         return countryService.update(id, request);
     }

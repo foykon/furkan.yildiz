@@ -11,17 +11,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping(value="/api/v1/auth",
+        produces = MediaType.APPLICATION_JSON_VALUE)
+
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DataResult<AuthResponse>> login(
             @Valid @RequestBody LoginRequest req,
             HttpServletResponse res
@@ -30,7 +33,7 @@ public class AuthController {
         return ResponseEntity.ok(new SuccessDataResult<>(auth, "auth.success"));
     }
 
-    @PostMapping("/refresh")
+    @PostMapping(value = "/refresh",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DataResult<AuthResponse>> refresh(
             HttpServletRequest req,
             HttpServletResponse res
@@ -39,7 +42,7 @@ public class AuthController {
         return ResponseEntity.ok(new SuccessDataResult<>(auth, "auth.refresh.success"));
     }
 
-    @PostMapping("/logout")
+    @PostMapping(value = "/logout",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result> logout(
             HttpServletRequest req,
             HttpServletResponse res

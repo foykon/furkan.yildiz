@@ -8,16 +8,17 @@ import com.furkan.project.movie.dto.director.DirectorRequest;
 import com.furkan.project.movie.service.DirectorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/directors")
+@RequestMapping(value = "/api/v1/directors",produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class DirectorController {
 
     private final DirectorService directorService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<DirectorResponse> create(@RequestBody DirectorRequest request) {
         return directorService.create(request);
     }
@@ -32,7 +33,7 @@ public class DirectorController {
         return directorService.list(q, pageable);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<DirectorResponse> update(@PathVariable Long id, @RequestBody DirectorRequest request) {
         return directorService.update(id, request);
     }

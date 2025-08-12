@@ -5,12 +5,13 @@ import com.furkan.project.movie.dto.castItem.CastItemRequest.CastItemRequest;
 import com.furkan.project.movie.dto.castItem.CastItemRequest.CastItemResponse;
 import com.furkan.project.movie.service.MovieCastService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/movies/{movieId}/cast")
+@RequestMapping(value = "/api/v1/movies/{movieId}/cast", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class MovieCastController {
 
@@ -21,12 +22,12 @@ public class MovieCastController {
         return movieCastService.list(movieId);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Result add(@PathVariable Long movieId, @RequestBody CastItemRequest req) {
         return movieCastService.add(movieId, req);
     }
 
-    @PutMapping("/{castId}")
+    @PutMapping(value = "/{castId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Result update(@PathVariable Long movieId,
                          @PathVariable Long castId,
                          @RequestBody CastItemRequest req) {

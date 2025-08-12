@@ -9,16 +9,18 @@ import com.furkan.project.movie.dto.movie.response.MovieResponse;
 import com.furkan.project.movie.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/movies")
+@RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class MovieController {
 
     private final MovieService movieService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+
     public DataResult<MovieResponse> create(@RequestBody MovieRequest movieRequest) {
         return movieService.create(movieRequest);
     }
@@ -33,7 +35,7 @@ public class MovieController {
         return movieService.search(filter, pageable);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<MovieResponse> update(@PathVariable Long id, @RequestBody MovieRequest movieRequest) {
         return movieService.update(id, movieRequest);
     }

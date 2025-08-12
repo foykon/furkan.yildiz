@@ -9,16 +9,18 @@ import com.furkan.project.movie.dto.genre.GenreRequest;
 import com.furkan.project.movie.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/genres")
+@RequestMapping(value = "/api/v1/genres",
+        produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class GenreController {
 
     private final GenreService genreService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<GenreResponse> create(@RequestBody GenreRequest request) {
         return genreService.create(request);
     }
@@ -33,7 +35,7 @@ public class GenreController {
         return genreService.list(q, pageable);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public DataResult<GenreResponse> update(@PathVariable Long id, @RequestBody GenreRequest request) {
         return genreService.update(id, request);
     }
