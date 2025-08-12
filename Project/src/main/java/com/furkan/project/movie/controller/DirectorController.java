@@ -6,6 +6,7 @@ import com.furkan.project.common.result.Result;
 import com.furkan.project.movie.dto.director.DirectorResponse;
 import com.furkan.project.movie.dto.director.DirectorRequest;
 import com.furkan.project.movie.service.DirectorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -19,7 +20,7 @@ public class DirectorController {
     private final DirectorService directorService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public DataResult<DirectorResponse> create(@RequestBody DirectorRequest request) {
+    public DataResult<DirectorResponse> create(@Valid @RequestBody DirectorRequest request) {
         return directorService.create(request);
     }
 
@@ -34,7 +35,7 @@ public class DirectorController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public DataResult<DirectorResponse> update(@PathVariable Long id, @RequestBody DirectorRequest request) {
+    public DataResult<DirectorResponse> update(@PathVariable Long id,@Valid @RequestBody DirectorRequest request) {
         return directorService.update(id, request);
     }
 

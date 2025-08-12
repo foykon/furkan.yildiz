@@ -4,6 +4,7 @@ import com.furkan.project.common.result.Result;
 import com.furkan.project.movie.dto.castItem.CastItemRequest.CastItemRequest;
 import com.furkan.project.movie.dto.castItem.CastItemRequest.CastItemResponse;
 import com.furkan.project.movie.service.MovieCastService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class MovieCastController {
     private final MovieCastService movieCastService;
 
     @GetMapping
-    public DataResult<List<CastItemResponse>> list(@PathVariable Long movieId) {
+    public DataResult<List<CastItemResponse>> list(@Valid @PathVariable Long movieId) {
         return movieCastService.list(movieId);
     }
 
@@ -30,7 +31,7 @@ public class MovieCastController {
     @PutMapping(value = "/{castId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Result update(@PathVariable Long movieId,
                          @PathVariable Long castId,
-                         @RequestBody CastItemRequest req) {
+                         @Valid @RequestBody CastItemRequest req) {
         return movieCastService.update(movieId, castId, req);
     }
 

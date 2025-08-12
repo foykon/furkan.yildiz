@@ -7,6 +7,7 @@ import com.furkan.project.movie.dto.movie.request.MovieFilterRequest;
 import com.furkan.project.movie.dto.movie.request.MovieRequest;
 import com.furkan.project.movie.dto.movie.response.MovieResponse;
 import com.furkan.project.movie.service.MovieService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ public class MovieController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 
-    public DataResult<MovieResponse> create(@RequestBody MovieRequest movieRequest) {
+    public DataResult<MovieResponse> create(@Valid @RequestBody MovieRequest movieRequest) {
         return movieService.create(movieRequest);
     }
 
@@ -36,7 +37,7 @@ public class MovieController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public DataResult<MovieResponse> update(@PathVariable Long id, @RequestBody MovieRequest movieRequest) {
+    public DataResult<MovieResponse> update(@PathVariable Long id,@Valid @RequestBody MovieRequest movieRequest) {
         return movieService.update(id, movieRequest);
     }
 

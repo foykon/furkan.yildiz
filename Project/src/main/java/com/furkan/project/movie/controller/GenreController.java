@@ -7,6 +7,7 @@ import com.furkan.project.common.result.Result;
 import com.furkan.project.movie.dto.genre.GenreResponse;
 import com.furkan.project.movie.dto.genre.GenreRequest;
 import com.furkan.project.movie.service.GenreService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ public class GenreController {
     private final GenreService genreService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public DataResult<GenreResponse> create(@RequestBody GenreRequest request) {
+    public DataResult<GenreResponse> create(@Valid @RequestBody GenreRequest request) {
         return genreService.create(request);
     }
 
@@ -36,7 +37,7 @@ public class GenreController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public DataResult<GenreResponse> update(@PathVariable Long id, @RequestBody GenreRequest request) {
+    public DataResult<GenreResponse> update(@PathVariable Long id, @Valid @RequestBody GenreRequest request) {
         return genreService.update(id, request);
     }
 
