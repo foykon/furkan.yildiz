@@ -1,5 +1,6 @@
 package com.furkan.project.list.controller;
 
+import com.furkan.project.auth.entity.AuthUser;
 import com.furkan.project.common.result.DataResult;
 import com.furkan.project.common.result.PagedDataResult;
 import com.furkan.project.common.result.Result;
@@ -34,17 +35,18 @@ public class ListController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/me")
     public PagedDataResult<ListItemResponse> myList(
-            @AuthenticationPrincipal UserDetails principal,
+            @AuthenticationPrincipal AuthUser principal,
             @RequestParam ListType type,
             @Valid ListFilterRequest filter,
             Pageable pageable
     ) {
-        Long userId = resolveCurrentUserId(principal);
+        Long userId = principal.getId();
         return listService.getList(userId, type, filter, pageable);
     }
 
     // ---- Ekle (idempotent) ----
-    @PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    //@PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("/{userId}")
     public DataResult<ListItemResponse> add(
             @PathVariable Long userId,
@@ -54,7 +56,8 @@ public class ListController {
     }
 
     // ---- Sil (idempotent soft delete) ----
-    @PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    //@PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public Result remove(
             @PathVariable Long userId,
@@ -65,7 +68,8 @@ public class ListController {
     }
 
     // ---- İçerir mi? ----
-    @PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    //@PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/{userId}/contains")
     public DataResult<Boolean> contains(
             @PathVariable Long userId,
@@ -76,7 +80,8 @@ public class ListController {
     }
 
     // ---- Sıralama (opsiyonel) ----
-    @PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    //@PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("/{userId}/reorder")
     public Result reorder(
             @PathVariable Long userId,
@@ -86,7 +91,8 @@ public class ListController {
     }
 
     // ---- Listeyi temizle (opsiyonel) ----
-    @PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    //@PreAuthorize("@sec.isSelfOrAdmin(#userId, authentication)")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping("/{userId}/clear")
     public Result clear(
             @PathVariable Long userId,
@@ -101,7 +107,7 @@ public class ListController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "auth.required");
         }
         String username = principal.getUsername();
-        Long userId = userApi.findIdByUsername(username); // <-- AŞAĞIDAKİ notu gör
+        Long userId = userApi.findIdByUsername(username);
         if (userId == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "user.notfound");
         }

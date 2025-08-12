@@ -1,5 +1,6 @@
 package com.furkan.project.auth.jwt;
 
+import com.furkan.project.auth.entity.AuthUser;
 import com.furkan.project.user.entity.User;
 import com.furkan.project.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -41,12 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .map(r -> new SimpleGrantedAuthority(r.getName().name()))
                             .collect(Collectors.toSet());
 
-                    var authentication = new UsernamePasswordAuthenticationToken(
-                            user.getUsername(), null, authorities
-                    );
-                    authentication.setDetails(user.getId());
+                    var principal = new AuthUser(user.getId(), user.getUsername(), authorities);
 
+                    var authentication = new UsernamePasswordAuthenticationToken(
+                            principal, null, authorities
+                    );
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 }
             }
         }

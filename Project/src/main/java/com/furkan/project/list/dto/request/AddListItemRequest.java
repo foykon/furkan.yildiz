@@ -13,5 +13,5 @@ public class AddListItemRequest {
     @NotNull
     private ListType type;
 
-    private Integer orderIndex;
+    private int orderIndex;
 }
