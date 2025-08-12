@@ -1,0 +1,161 @@
+/* mevcutların altına ekle */
+.ant-layout-header{
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+
+.container{
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.header-wrap{
+  display:flex; align-items:center; gap:18px;
+}
+
+.nav-link{
+  color:#fff; opacity:.9; padding:6px 10px; border-radius:8px;
+}
+.nav-link:hover{ background: rgba(255,255,255,.06); opacity:1; }
+
+.header-right{ margin-left:auto; display:flex; align-items:center; gap:12px; }
+
+/* Mega dropdown (4 sütun) */
+.mega{
+  background:#262b33;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  padding:12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+  max-height: 60vh;
+  overflow:auto;
+
+  display:grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap:8px;
+}
+.mega-item{
+  display:block;
+  padding:8px 10px;
+  border-radius:8px;
+  color:#fff;
+  text-decoration:none;
+  background:transparent;
+  border:1px solid transparent;
+}
+.mega-item:hover{
+  background: rgba(0,188,212,.12);
+  border-color: rgba(0,188,212,.25);
+}
+
+/* Search input boyutu */
+.header-right .ant-input-search{
+  width: 320px;
+}
+/* Login sayfası için özel stil */
+.auth-wrap {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+}
+
+/* Navbar container sadece header içinde çalışsın */
+header .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+header .header-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+header .nav-link {
+  color: #fff;
+  opacity: 0.9;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+header .nav-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  opacity: 1;
+}
+
+header .header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* === Global temel === */
+:root{ --bg:#1F232B; --teal:#00BCD4; }
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background-color: var(--bg) !important; /* koyu zemin */
+  color: #fff;
+  font-family: system-ui, Segoe UI, Roboto, Arial;
+}
+
+/* === Login sayfası düzeni === */
+.auth-wrap{
+  min-height: 100vh;           /* tam ekran */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg) !important; /* herhangi bir override'ı ez */
+}
+
+/* Sadece Login kartı (global .ant-card'ı ezmeyelim) */
+.login-card{
+  width: 420px;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+.login-card .ant-card-body{ padding: 28px; }
+
+/* Login input buton tonları (karanlık tema uyumu) */
+.login-card .ant-input-affix-wrapper{
+  background: #0f1116 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+.login-card input::placeholder{ color: rgba(255,255,255,.55); }
+
+.login-card .ant-checkbox-checked .ant-checkbox-inner{
+  background-color: var(--teal) !important;
+  border-color: var(--teal) !important;
+}
+.login-card .ant-btn-primary{
+  background-color: var(--teal) !important;
+  border-color: var(--teal) !important;
+}
+header .container{ max-width:1200px; margin:0 auto; width:100%; }
+header .header-wrap{ display:flex; align-items:center; gap:18px; }
+header .nav-link{ color:#fff; opacity:.9; padding:6px 10px; border-radius:8px; }
+header .nav-link:hover{ background: rgba(255,255,255,.06); opacity:1; }
+header .header-right{ margin-left:auto; display:flex; align-items:center; gap:12px; }
+.ant-table-row-selected > td { background: rgba(0,188,212,.10) !important; }
+.profile-page .ant-table-wrapper .ant-table-container { overflow: hidden; }
+.profile-page .ant-table-wrapper .ant-table-header { position: static !important; z-index: 1; }
+.profile-right-card { position: relative; z-index: 2; }
+/* Sol kart içinden taşanı kart içinde kırp */
+.users-card { overflow: hidden; }
+
+/* Sağ kart her zaman üstte kalmasın; normal akışta dursun */
+.profile-right-card { position: relative; z-index: auto; }
+
+/* (Güvenlik) Tablo satırındaki Action hücresi tıklandığında satır click’i tetiklenmesin */
+.ant-table .ant-table-cell .action-cell { pointer-events: auto; }
+.row-clickable { cursor: pointer; }
+.ant-table-row-selected > td { background: rgba(0,188,212,.10) !important; }

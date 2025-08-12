@@ -1,0 +1,75 @@
+.movie-detail .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.movie-detail .hero {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  min-height: 360px;
+}
+
+.movie-detail .hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.65));
+}
+
+.movie-detail .hero .container {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+.movie-detail .back-btn {
+  margin-bottom: 12px;
+}
+
+.movie-detail .poster-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+}
+.movie-detail .poster-wrap img {
+  width: 100%; display: block;
+}
+
+.movie-detail .title {
+  color: #fff !important;
+  margin-bottom: 8px;
+}
+
+.movie-detail .meta { margin-bottom: 12px; }
+.movie-detail .rating-text { color: #fff; }
+
+.movie-detail .cta { margin: 8px 0 4px; }
+
+.movie-detail .quick-info .chips .ant-tag { margin-bottom: 6px; }
+
+.movie-detail .overview {
+  color: #f2f2f2;
+  max-width: 820px;
+}
+
+/* Sections under hero */
+.movie-detail .section { padding: 24px 16px; }
+
+/* Video placeholder */
+.movie-detail .video-box {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,.25);
+  background: #0f1117;
+  display: grid;
+  place-items: center;
+}
+.movie-detail .video-placeholder {
+  opacity: .7; color: #fff;
+}
+
+/* Cast cards */
+.movie-detail .cast-card { text-align: center; }
+.movie-detail .cast-name { font-weight: 600; }
+.movie-detail .cast-role { opacity: .75; font-size: 12px; }

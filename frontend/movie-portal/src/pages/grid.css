@@ -1,0 +1,38 @@
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.grid-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.grid-actions { display: flex; gap: 12px; }
+
+/* 7'li grid */
+.grid-7 {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* responsive kırılımlar */
+@media (max-width: 1600px) { .grid-7 { grid-template-columns: repeat(6, 1fr); } }
+@media (max-width: 1400px) { .grid-7 { grid-template-columns: repeat(5, 1fr); } }
+@media (max-width: 1200px) { .grid-7 { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 992px)  { .grid-7 { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .grid-7 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .grid-7 { grid-template-columns: 1fr; } }
+
+.grid-pagination {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+}
