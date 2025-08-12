@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/countries")
+@RequestMapping("/api/v1/countries")
 @RequiredArgsConstructor
 public class CountryController {
 

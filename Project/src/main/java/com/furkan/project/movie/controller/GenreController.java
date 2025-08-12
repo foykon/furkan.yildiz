@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/genres")
+@RequestMapping("/api/v1/genres")
 @RequiredArgsConstructor
 public class GenreController {
 

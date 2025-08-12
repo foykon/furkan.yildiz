@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/languages")
+@RequestMapping("/api/v1/languages")
 @RequiredArgsConstructor
 public class LanguageController {
 

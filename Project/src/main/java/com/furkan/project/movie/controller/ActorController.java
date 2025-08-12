@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/actors")
+@RequestMapping("/api/v1/actors")
 @RequiredArgsConstructor
 public class ActorController {
 

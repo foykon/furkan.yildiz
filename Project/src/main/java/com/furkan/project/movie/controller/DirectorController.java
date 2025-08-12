@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/directors")
+@RequestMapping("/api/v1/directors")
 @RequiredArgsConstructor
 public class DirectorController {
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movies/{movieId}/cast")
+@RequestMapping("/api/v1/movies/{movieId}/cast")
 @RequiredArgsConstructor
 public class MovieCastController {
 
