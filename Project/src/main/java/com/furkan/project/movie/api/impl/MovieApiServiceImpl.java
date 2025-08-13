@@ -2,7 +2,9 @@ package com.furkan.project.movie.api.impl;
 
 import com.furkan.project.movie.api.MovieApiService;
 import com.furkan.project.movie.api.MovieSummary;
+import com.furkan.project.movie.api.MovieSummaryForAi;
 import com.furkan.project.movie.entity.Movie;
+import com.furkan.project.movie.repository.DirectorRepository;
 import com.furkan.project.movie.repository.MovieRepository; // sende movie.repository
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class MovieApiServiceImpl implements MovieApiService {
 
     private final MovieRepository movieRepository;
+    private final DirectorRepository directorRepository;
 
     @Override
     public boolean existsById(Long movieId) {
@@ -28,6 +31,13 @@ public class MovieApiServiceImpl implements MovieApiService {
     public MovieSummary getSummary(Long movieId) {
         return movieRepository.findById(movieId)
                 .map(this::toSummary)
+                .orElse(null);
+    }
+
+    @Override
+    public MovieSummaryForAi getSummaryForAi(Long movieId) {
+        return movieRepository.findById(movieId)
+                .map(this::toAiSummary)
                 .orElse(null);
     }
 
@@ -49,5 +59,10 @@ public class MovieApiServiceImpl implements MovieApiService {
     private MovieSummary toSummary(Movie m) {
         Integer year = (m.getReleaseDate() != null) ? m.getReleaseDate().getYear() : null;
         return new MovieSummary(m.getId(), m.getTitle(), m.getImageUrl(), year);
+    }
+
+    private MovieSummaryForAi toAiSummary(Movie m) {
+        Integer year = (m.getReleaseDate() != null) ? m.getReleaseDate().getYear() : null;
+        return new MovieSummaryForAi(m.getId(), m.getTitle(), year.toString(), m.getGenres().stream().map(g->g.getName()).toList(), directorRepository.findById(m.getDirector().getId()).get().getName(), m.getRating(), m.getDescription());
     }
 }

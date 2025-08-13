@@ -11,7 +11,11 @@ export const endpoints = {
     refresh:"/api/v1/auth/refresh",
     logout: "/api/v1/auth/logout",
   },
-
+ai: {
+    comment: (movieId) => `/api/v1/movies/${movieId}/ai/comment`,
+    stream:  (movieId) => `/api/v1/movies/${movieId}/ai/comment/stream`,
+    clearCache: `/api/v1/ai/cache/comments`,
+  },
   movies: {
     search: "/api/v1/movies",
     byId:   (id) => `/api/v1/movies/${id}`,

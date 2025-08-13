@@ -9,4 +9,6 @@ public interface MovieApiService {
     MovieSummary getSummary(Long movieId);
     Map<Long, MovieSummary> getSummaries(Collection<Long> ids);
     Set<Long> filterIdsByTitleWithin(Collection<Long> candidateIds, String q);
+     MovieSummaryForAi getSummaryForAi(Long movieId) ;
+
 }

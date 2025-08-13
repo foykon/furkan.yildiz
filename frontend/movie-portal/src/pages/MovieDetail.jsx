@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Comments from "../components/Comment.jsx";
 import RowSection from "../components/RowSection.jsx";
+import AiOpinion from "../components/AiOpinion.jsx"; // 👈 EKLENDİ
 import {
   Row, Col, Typography, Tag, Space, Button, Tooltip,
   Skeleton, Divider, List, Card, Rate, message
@@ -30,7 +31,7 @@ export default function MovieDetail() {
   const [inFav, setInFav] = useState(false);
   const [toggling, setToggling] = useState(false);
 
-  // Similar için state (DOĞRU YER: component gövdesi)
+  // Similar için state
   const [similarGenreId, setSimilarGenreId] = useState(null);
 
   // helpers
@@ -58,7 +59,7 @@ export default function MovieDetail() {
     return () => { alive = false; };
   }, [id]);
 
-  // similar genre id (film geldikten sonra belirle)
+  // similar genre id
   useEffect(() => {
     if (movie?.genres?.length) {
       setSimilarGenreId(movie.genres[0]?.id ?? null);
@@ -228,6 +229,12 @@ export default function MovieDetail() {
 
                 <Title level={4}>Overview</Title>
                 <Paragraph className="overview">{movie.description || "No description."}</Paragraph>
+
+                {/* ---------- AI Opinion section (buraya gömüldü) ---------- */}
+                <Divider />
+                <Title level={4}>AI Yorumu</Title>
+                <AiOpinion movieId={Number(id)} />
+                {/* --------------------------------------------------------- */}
               </Col>
             </Row>
           ) : (
