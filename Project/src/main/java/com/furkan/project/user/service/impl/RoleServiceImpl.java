@@ -1,5 +1,6 @@
 package com.furkan.project.user.service.impl;
 
+import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.DataResult;
 import com.furkan.project.common.result.SuccessDataResult;
 import com.furkan.project.common.service.MessageService;
@@ -17,6 +18,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@LogExecution
+
 public class RoleServiceImpl implements com.furkan.project.user.service.RoleService {
 
     private final RoleRepository roleRepository;

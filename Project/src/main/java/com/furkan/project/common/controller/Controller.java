@@ -1,4 +1,4 @@
-package com.furkan.project;
+package com.furkan.project.common.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

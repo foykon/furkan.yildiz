@@ -6,6 +6,7 @@ import com.furkan.project.auth.jwt.JwtTokenProvider;
 import com.furkan.project.auth.service.AuthService;
 import com.furkan.project.auth.service.RefreshCookieService;
 import com.furkan.project.auth.service.RefreshTokenService;
+import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +23,8 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@LogExecution
+
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;

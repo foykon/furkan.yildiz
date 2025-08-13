@@ -1,5 +1,6 @@
 package com.furkan.project.movie.service.impl;
 
+import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
 import com.furkan.project.movie.dto.castItem.CastItemRequest.CastItemRequest;
 import com.furkan.project.movie.dto.castItem.CastItemRequest.CastItemResponse;
@@ -15,6 +16,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@LogExecution
+
 public class MovieCastServiceImpl implements MovieCastService {
 
     private final MovieRepository movieRepository;

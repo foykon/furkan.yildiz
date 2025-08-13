@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react";
-import { Card, Row, Col, message, Spin, Tabs } from "antd";
+// src/pages/Profile.jsx
+import { useEffect, useRef, useState } from "react";
+import { Card, Row, Col, message, Spin, Tabs, Select, Space, Typography } from "antd";
 import { api, endpoints } from "../lib/api";
 import { getPrincipal } from "../auth/auth";
+
 import UserListPanel from "../profile/UserListPanel.jsx";
 import UserForm from "../profile/UserForm.jsx";
 import MovieAdminPanel from "../admin/MovieAdminPanel.jsx";
 import CatalogCrud from "../admin/CatalogCrud.jsx";
+import MovieCastPanel from "../admin/cast/MovieCastPanel.jsx";
+
+const { Paragraph } = Typography;
 
 export default function Profile() {
   const principal = getPrincipal();
@@ -15,6 +20,12 @@ export default function Profile() {
   const [mode, setMode] = useState("edit");
   const [loading, setLoading] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+
+  // --- CAST sekmesi: film arama/seçim state'i ---
+  const [castMovieId, setCastMovieId] = useState(null);
+  const [movieOptions, setMovieOptions] = useState([]);
+  const [fetchingMovies, setFetchingMovies] = useState(false);
+  const debRef = useRef();
 
   useEffect(() => {
     if (!isAdmin) {
@@ -37,6 +48,36 @@ export default function Profile() {
   }, [isAdmin]);
 
   const refreshList = () => setReloadKey(k => k + 1);
+
+  // --- CAST sekmesi: film listeleme (search) ---
+  const loadMovies = async (q = "") => {
+    setFetchingMovies(true);
+    try {
+      const params = {
+        "filter.title": q || undefined,
+        "pageable.page": 0,
+        "pageable.size": 10,
+        "pageable.sort": ["releaseDate,desc"]
+      };
+      const { data } = await api.get(endpoints.movies.search, { params });
+      const arr = data?.data ?? [];
+      setMovieOptions(arr.map(m => ({
+        label: m.title,
+        value: m.id,
+      })));
+    } catch (e) {
+      message.error("Movies fetch failed");
+    } finally {
+      setFetchingMovies(false);
+    }
+  };
+
+  useEffect(() => { loadMovies(""); }, []);
+
+  const handleMovieSearch = (q) => {
+    clearTimeout(debRef.current);
+    debRef.current = setTimeout(() => loadMovies(q), 300);
+  };
 
   if (!isAdmin) {
     // Normal kullanıcı
@@ -111,6 +152,39 @@ export default function Profile() {
             key: "movies",
             label: "Movies",
             children: <MovieAdminPanel />,
+          },
+          {
+            key: "cast",
+            label: "Cast",
+            children: (
+              <>
+                <Space style={{ marginBottom: 12 }} wrap>
+                  <Select
+                    showSearch
+                    allowClear
+                    placeholder="Select a movie to manage its cast"
+                    style={{ minWidth: 320 }}
+                    value={castMovieId ?? undefined}
+                    options={movieOptions}
+                    filterOption={false}
+                    onSearch={handleMovieSearch}
+                    onChange={(v) => setCastMovieId(v || null)}
+                    loading={fetchingMovies}
+                  />
+                </Space>
+
+                {castMovieId ? (
+                  <Card title={`Cast of Movie #${castMovieId}`}>
+                    <MovieCastPanel
+                      movieId={castMovieId}
+                      onChanged={() => message.success("Cast updated")}
+                    />
+                  </Card>
+                ) : (
+                  <Paragraph type="secondary">Lütfen bir film seçin.</Paragraph>
+                )}
+              </>
+            ),
           },
           {
             key: "actors",

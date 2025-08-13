@@ -4,10 +4,13 @@ import com.furkan.project.common.result.ErrorDataResult;
 import com.furkan.project.common.result.ErrorResult;
 import com.furkan.project.common.result.Result;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,76 +18,159 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // -------- 400s
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Result> handleIllegalArgument(IllegalArgumentException ex) {
-        log.warn("IllegalArgument: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResult(messageOrDefault(ex.getMessage(), "bad.request")));
+    public ResponseEntity<Result> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest req) {
+        var status = HttpStatus.BAD_REQUEST;
+        String code = messageOrDefault(ex.getMessage(), "bad.request");
+        logClientError(req, ex, status, code);
+        return ResponseEntity.status(status).body(new ErrorResult(code));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDataResult<Map<String, String>>> handleBeanValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorDataResult<Map<String, String>>> handleBeanValidation(MethodArgumentNotValidException ex,
+                                                                                     HttpServletRequest req) {
         Map<String, String> errors = new LinkedHashMap<>();
         for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
             errors.put(fe.getField(), fe.getDefaultMessage());
         }
-        log.warn("BeanValidation failed: {}", errors);
+        logClientError(req, ex, HttpStatus.BAD_REQUEST, "validation.failed");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorDataResult<>(errors, "validation.failed"));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorDataResult<Map<String, String>>> handleConstraint(ConstraintViolationException ex) {
+    public ResponseEntity<ErrorDataResult<Map<String, String>>> handleConstraint(ConstraintViolationException ex,
+                                                                                 HttpServletRequest req) {
         Map<String, String> errors = new LinkedHashMap<>();
-        ex.getConstraintViolations().forEach(v ->
-                errors.put(v.getPropertyPath().toString(), v.getMessage()));
-        log.warn("ConstraintViolation: {}", errors);
+        ex.getConstraintViolations().forEach(v -> errors.put(v.getPropertyPath().toString(), v.getMessage()));
+        logClientError(req, ex, HttpStatus.BAD_REQUEST, "validation.failed");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorDataResult<>(errors, "validation.failed"));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<Result> handleMissingParam(MissingServletRequestParameterException ex) {
-        log.warn("Missing param: {}", ex.getParameterName());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResult("missing.parameter." + ex.getParameterName()));
+    public ResponseEntity<Result> handleMissingParam(MissingServletRequestParameterException ex, HttpServletRequest req) {
+        String code = "missing.parameter." + ex.getParameterName();
+        logClientError(req, ex, HttpStatus.BAD_REQUEST, code);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResult(code));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Result> handleNotReadable(HttpMessageNotReadableException ex) {
-        log.warn("Malformed JSON: {}", ex.getMostSpecificCause().getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResult("malformed.json"));
+    public ResponseEntity<Result> handleNotReadable(HttpMessageNotReadableException ex, HttpServletRequest req) {
+        logClientError(req, ex, HttpStatus.BAD_REQUEST, "malformed.json");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResult("malformed.json"));
     }
 
-    // 404 - Bulunamadı
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Result> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest req) {
+        String code = "parameter.type.mismatch." + ex.getName();
+        logClientError(req, ex, HttpStatus.BAD_REQUEST, code);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResult(code));
+    }
+
+    // -------- 401/403
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Result> handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
+        logClientError(req, ex, HttpStatus.UNAUTHORIZED, "auth.invalid.credentials");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResult("auth.invalid.credentials"));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Result> handleAccessDenied(AccessDeniedException ex, HttpServletRequest req) {
+        logClientError(req, ex, HttpStatus.FORBIDDEN, "auth.forbidden");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResult("auth.forbidden"));
+    }
+
+    // -------- 404
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Result> handleEntityNotFound(EntityNotFoundException ex) {
-        log.warn("EntityNotFound: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResult(messageOrDefault(ex.getMessage(), "resource.notfound")));
+    public ResponseEntity<Result> handleEntityNotFound(EntityNotFoundException ex, HttpServletRequest req) {
+        String code = messageOrDefault(ex.getMessage(), "resource.notfound");
+        logClientError(req, ex, HttpStatus.NOT_FOUND, code);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResult(code));
     }
 
-    // 409 - Çakışma / bütünlük hataları
+    // -------- 405
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Result> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
+        logClientError(req, ex, HttpStatus.METHOD_NOT_ALLOWED, "method.not.allowed");
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new ErrorResult("method.not.allowed"));
+    }
+
+    // -------- 409
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Result> handleDataIntegrity(DataIntegrityViolationException ex) {
+    public ResponseEntity<Result> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest req) {
         String code = resolveConflictCode(ex);
-        log.warn("DataIntegrityViolation [{}]: {}", code, ex.getMostSpecificCause().getMessage());
+        logClientError(req, ex, HttpStatus.CONFLICT, code);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .header("X-Error-Code", code)
                 .body(new ErrorResult(code));
+    }
+
+    // -------- ResponseStatusException (çeşitli)
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Result> handleResponseStatus(ResponseStatusException ex, HttpServletRequest req) {
+        String code = messageOrDefault(ex.getReason(), "error");
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        if (status == null) status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        if (status.is4xxClientError()) {
+            logClientError(req, ex, status, code);
+        } else {
+            logServerError(req, ex, status, code);
+        }
+        return ResponseEntity.status(status).body(new ErrorResult(code));
+    }
+
+    // -------- 500 (catch-all)
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Result> handleGeneric(Exception ex, HttpServletRequest req) {
+        logServerError(req, ex, HttpStatus.INTERNAL_SERVER_ERROR, "internal.error");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResult("internal.error"));
+    }
+
+    // ===== Helpers =====
+
+    private void logClientError(HttpServletRequest req, Exception ex, HttpStatus status, String code) {
+        String path = req.getRequestURI() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
+        String corr = nvl(MDC.get("correlationId"), "");
+        String user = nvl(MDC.get("userId"), "");
+        String cause = rootMessage(ex);
+        // 4xx: WARN, stack trace YOK
+        log.warn("http error status={} method={} path={} code={} error={} message={} corr={} user={}",
+                status.value(), req.getMethod(), path, nvl(code, "-"),
+                ex.getClass().getSimpleName(), cause, corr, user);
+    }
+
+    private void logServerError(HttpServletRequest req, Exception ex, HttpStatus status, String code) {
+        String path = req.getRequestURI() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
+        String corr = nvl(MDC.get("correlationId"), "");
+        String user = nvl(MDC.get("userId"), "");
+        String cause = rootMessage(ex);
+        // 5xx: ERROR, stack trace VAR
+        log.error("http error status={} method={} path={} code={} error={} message={} corr={} user={}",
+                status.value(), req.getMethod(), path, nvl(code, "-"),
+                ex.getClass().getSimpleName(), cause, corr, user, ex);
     }
 
     private String resolveConflictCode(DataIntegrityViolationException ex) {
@@ -95,58 +181,21 @@ public class GlobalExceptionHandler {
             if (c.contains("uk_user_username") || c.contains("uq_user_username")) return "username.taken";
             if (c.contains("uq_user_list_movie") || c.contains("uk_user_movie")) return "movie.already.in.list";
         }
-        String msg = Optional.ofNullable(ex.getMostSpecificCause().getMessage()).orElse("").toLowerCase();
+        String msg = Optional.ofNullable(ex.getMostSpecificCause()).map(Throwable::getMessage).orElse("").toLowerCase();
         if (msg.contains("email")) return "email.taken";
         if (msg.contains("username")) return "username.taken";
         return "data.integrity.violation";
     }
 
-    // 500 - Beklenmeyen
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result> handleGeneric(Exception ex) {
-        log.error("Unexpected error", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResult("internal.error"));
+    private String rootMessage(Throwable t) {
+        Throwable r = t;
+        while (r.getCause() != null && r.getCause() != r) r = r.getCause();
+        return (r.getMessage() != null ? r.getMessage() : r.toString());
     }
-
-    @ExceptionHandler(BadCredentialsException.class) // 401
-    public ResponseEntity<Result> handleBadCredentials(BadCredentialsException ex) {
-        log.warn("BadCredentials");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResult("auth.invalid.credentials"));
-    }
-
-    @ExceptionHandler(AccessDeniedException.class) // 403
-    public ResponseEntity<Result> handleAccessDenied(AccessDeniedException ex) {
-        log.warn("AccessDenied");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResult("auth.forbidden"));
-    }
-
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class) // 405
-    public ResponseEntity<Result> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
-        log.warn("MethodNotAllowed: {}", ex.getMethod());
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(new ErrorResult("method.not.allowed"));
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class) // 400 - tip/format hatası
-    public ResponseEntity<Result> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        log.warn("TypeMismatch: param={}, value={}", ex.getName(), ex.getValue());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResult("parameter.type.mismatch." + ex.getName()));
-    }
-
-    @ExceptionHandler(ResponseStatusException.class) // @ResponseStatus atılan yerler için
-    public ResponseEntity<Result> handleResponseStatus(ResponseStatusException ex) {
-        log.warn("ResponseStatus: {}", ex.getReason());
-        return ResponseEntity.status(ex.getStatusCode())
-                .body(new ErrorResult(messageOrDefault(ex.getReason(), "error")));
-    }
-
 
     private String messageOrDefault(String msg, String def) {
         return (msg == null || msg.isBlank()) ? def : msg;
     }
+
+    private String nvl(String s, String d) { return (s == null || s.isBlank()) ? d : s; }
 }

@@ -1,5 +1,6 @@
 package com.furkan.project.movie.service.impl;
 
+import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
 import com.furkan.project.movie.dto.country.CountryResponse;
 import com.furkan.project.movie.dto.genre.GenreResponse;
@@ -30,6 +31,7 @@ import static com.furkan.project.movie.spec.MovieSpecifications.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@LogExecution
 public class MovieServiceImpl implements MovieService {
 
     private final MovieRepository movieRepository;

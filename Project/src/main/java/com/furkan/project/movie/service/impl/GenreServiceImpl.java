@@ -1,5 +1,6 @@
 package com.furkan.project.movie.service.impl;
 
+import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
 import com.furkan.project.movie.dto.genre.GenreRequest;
 import com.furkan.project.movie.dto.genre.GenreResponse;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@LogExecution
+
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;

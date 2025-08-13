@@ -1,5 +1,6 @@
 package com.furkan.project.user.service.impl;
 
+import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.DataResult;
 import com.furkan.project.common.result.PagedDataResult;
 import com.furkan.project.common.result.Result;
@@ -38,6 +39,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@LogExecution
+
 public class UserServiceImpl implements UserService {
 
     private final MessageService messageService;

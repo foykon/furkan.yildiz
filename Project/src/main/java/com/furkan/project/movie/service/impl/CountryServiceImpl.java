@@ -1,5 +1,6 @@
 package com.furkan.project.movie.service.impl;
 
+import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
 import com.furkan.project.movie.dto.country.CountryRequest;
 import com.furkan.project.movie.dto.country.CountryResponse;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@LogExecution
+
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
