@@ -83,7 +83,8 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/health/**"
+                                "/api/health/**",
+                                "/__probe/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()

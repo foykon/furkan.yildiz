@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 import { getToken, setToken } from "../auth/auth";
 
-const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/+$/,"");
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8081").replace(/\/+$/,"");
 
 // ---- ENDPOINTS (v1) ----
 export const endpoints = {
