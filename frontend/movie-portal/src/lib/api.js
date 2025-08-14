@@ -6,10 +6,13 @@ const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8080").repla
 
 // ---- ENDPOINTS (v1) ----
 export const endpoints = {
+
   auth: {
     login:  "/api/v1/auth/login",
     refresh:"/api/v1/auth/refresh",
     logout: "/api/v1/auth/logout",
+    forgotPassword: "/api/auth/forgot-password",
+    resetPassword:  "/api/auth/reset-password",
   },
   ai: {
     comment: (movieId) => `/api/v1/movies/${movieId}/ai/comment`,
@@ -72,6 +75,8 @@ const AUTH_WHITELIST = [
   endpoints.auth.login,
   endpoints.auth.refresh,
   endpoints.auth.logout,
+  endpoints.auth.forgotPassword,
+  endpoints.auth.resetPassword,
 ];
 
 // add token

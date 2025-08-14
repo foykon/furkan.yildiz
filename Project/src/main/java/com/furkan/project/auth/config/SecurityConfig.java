@@ -79,6 +79,8 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // --- Public altyapı ---
+                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ops/mail/**").permitAll()
                         .requestMatchers("/error", "/favicon.ico").permitAll()
                         .requestMatchers(
                                 "/api/v1/auth/**",

@@ -10,6 +10,8 @@ import Navbar from "./components/Navbar.jsx";
 import { getToken } from "./auth/auth";
 import Logout from "./pages/Logout.jsx";
 import MovieDetail from "./pages/MovieDetail.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPAssword.jsx";
 
 function Protected() {
   const token = getToken();
@@ -32,18 +34,25 @@ function Shell() {
 export default function App() {
   return (
     <Routes>
+      {/* ---- Public routes (auth gerektirmez) ---- */}
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+
+      {/* ---- Protected routes (token gerekir) ---- */}
       <Route element={<Protected />}>
         <Route element={<Shell />}>
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile" element={<Profile />} />
-           <Route path="/logout" element={<Logout />} />
-           <Route path="/browse" element={<Browse/>} />
-           <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/browse" element={<Browse />} />
+          <Route path="/movie/:id" element={<MovieDetail />} />
           <Route path="/my/:type" element={<MyList />} /> {/* type=watch|favorite */}
         </Route>
       </Route>
+
+      {/* fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
