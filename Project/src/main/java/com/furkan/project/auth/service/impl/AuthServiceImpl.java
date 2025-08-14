@@ -1,12 +1,17 @@
 package com.furkan.project.auth.service.impl;
 
 import com.furkan.project.auth.dto.request.LoginRequest;
+import com.furkan.project.auth.dto.request.SignUpRequest;
 import com.furkan.project.auth.dto.response.AuthResponse;
 import com.furkan.project.auth.jwt.JwtTokenProvider;
 import com.furkan.project.auth.service.AuthService;
 import com.furkan.project.auth.service.RefreshCookieService;
 import com.furkan.project.auth.service.RefreshTokenService;
 import com.furkan.project.common.logging.LogExecution;
+import com.furkan.project.user.entity.ERole;
+import com.furkan.project.user.entity.Role;
+import com.furkan.project.user.entity.User;
+import com.furkan.project.user.repository.RoleRepository;
 import com.furkan.project.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,11 +19,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.LinkedHashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +37,10 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwt;
     private final UserRepository userRepository;
-
+private final RoleRepository roleRepository;
     private final RefreshTokenService refreshTokens;
     private final RefreshCookieService refreshCookies;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.refresh.expiration-sec:1209600}") // 14 gün
     private long refreshExpSec;
@@ -82,6 +90,33 @@ public class AuthServiceImpl implements AuthService {
         String raw = refreshCookies.read(req);
         refreshTokens.deleteByRawToken(raw);
         refreshCookies.clear(res);
+    }
+
+    @Override
+    public void signUp(SignUpRequest req) {
+        if (userRepository.existsByUsername(req.username())) {
+            throw new IllegalArgumentException("auth.signup.username.taken");
+        }
+        if (userRepository.existsByEmail(req.email())) {
+            throw new IllegalArgumentException("auth.signup.email.taken");
+        }
+
+        var user = new User();
+        user.setUsername(req.username());
+        user.setEmail(req.email());
+        user.setPassword(passwordEncoder.encode(req.password()));
+        user.setEnabled(false);
+        user.setLocked(false);
+        user.setDeleted(false);
+
+        var roleUser = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new IllegalStateException("role.ROLE_USER.missing"));
+        var roles = new LinkedHashSet<Role>();
+        roles.add(roleUser);
+        user.setRoles(roles);
+
+        userRepository.save(user);
+        // TODO: email verification
     }
 
     /* ------- helpers ------- */

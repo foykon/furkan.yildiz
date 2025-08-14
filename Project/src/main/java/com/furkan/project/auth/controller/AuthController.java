@@ -1,5 +1,6 @@
 package com.furkan.project.auth.controller;
 
+import com.furkan.project.auth.dto.request.SignUpRequest;
 import com.furkan.project.auth.dto.response.AuthResponse;
 import com.furkan.project.auth.dto.request.LoginRequest;
 import com.furkan.project.auth.service.AuthService;
@@ -49,5 +50,11 @@ public class AuthController {
     ) {
         authService.logout(req, res);
         return ResponseEntity.ok(new SuccessResult("auth.logout"));
+    }
+
+    @PostMapping("/signup")
+    public Result signUp(@RequestBody @Valid SignUpRequest req) {
+        authService.signUp(req);
+        return new SuccessResult("auth.signup.created");
     }
 }
