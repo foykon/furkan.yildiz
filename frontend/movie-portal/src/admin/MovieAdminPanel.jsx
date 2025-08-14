@@ -1,67 +1,111 @@
+// src/admin/MovieAdminPanel.jsx
 import { useEffect, useMemo, useState } from "react";
-import { Row, Col, Card, Table, Input, Button, Form, DatePicker, InputNumber, Select, Space, message, Popconfirm, Divider, List } from "antd";
+import {
+  Row, Col, Card, Table, Input, Button, Form, DatePicker, InputNumber,
+  Select, Space, message, Popconfirm, Divider, List, Typography, Tag
+} from "antd";
 import dayjs from "dayjs";
 import { api, endpoints } from "../lib/api";
 
+const { Text } = Typography;
 const STATUS_OPTS = ["RELEASED","UPCOMING","CANCELED"].map(v => ({ label: v, value: v }));
 const CONTENT_RATING_OPTS = ["G","PG","PG13","R","NC17"].map(v => ({ label: v, value: v }));
 
 export default function MovieAdminPanel() {
-  // sol liste
+  // --------- SOL: LİSTE DURUMLARI ---------
   const [q, setQ] = useState("");
+  const [statusFilter, setStatusFilter] = useState();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [rows, setRows] = useState([]);
   const [total, setTotal] = useState(0);
   const [loadingList, setLoadingList] = useState(false);
 
-  // sağ form
+  // --------- SAĞ: FORM DURUMLARI ---------
   const [form] = Form.useForm();
-  const [mode, setMode] = useState("create");
+  const [mode, setMode] = useState("create"); // create | edit
   const [selectedId, setSelectedId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [loadingOne, setLoadingOne] = useState(false);
 
-  // referanslar
+  // --------- REFERANSLAR ---------
   const [directors, setDirectors] = useState([]);
   const [genres, setGenres] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [actors, setActors] = useState([]);
 
-  // CAST
+  // --------- CAST ---------
   const [cast, setCast] = useState([]);
   const [loadingCast, setLoadingCast] = useState(false);
-  const [actors, setActors] = useState([]);
   const [castForm] = Form.useForm();
   const [savingCast, setSavingCast] = useState(false);
   const [editingCastId, setEditingCastId] = useState(null);
 
-  const listParams = useMemo(() => ({
-    "filter.title": q?.trim() || undefined,
-    "pageable.page": page - 1,
-    "pageable.size": pageSize,
-    "pageable.sort": ["releaseDate,desc","id,desc"],
-  }), [q, page, pageSize]);
+  // --------- HELPERS ----------
+  const listParams = useMemo(() => {
+    const p = {
+      "pageable.page": page - 1,
+      "pageable.size": pageSize,
+      "pageable.sort": ["releaseDate,desc", "id,desc"],
+    };
+    if (q?.trim()) p["filter.title"] = q.trim();
+    if (statusFilter) p["filter.status"] = statusFilter;
+    return p;
+  }, [q, statusFilter, page, pageSize]);
 
-  // referans data
+  const toFormValues = (m) => ({
+    title: m?.title ?? undefined,
+    description: m?.description ?? undefined,
+    releaseDate: m?.releaseDate ? dayjs(m.releaseDate) : null,
+    duration: m?.duration ?? undefined,
+    imageUrl: m?.imageUrl ?? undefined,
+    rating: m?.rating ?? undefined,
+    status: m?.status ?? undefined,
+    contentRating: m?.contentRating ?? undefined,
+    directorId: m?.directorId ?? undefined,
+    genreIds: (m?.genres || []).map(x => x.id),
+    languageIds: (m?.languages || []).map(x => x.id),
+    countryIds: (m?.countries || []).map(x => x.id),
+  });
+
+  const toRequestBody = (vals) => ({
+    title: vals.title,
+    description: vals.description,
+    releaseDate: vals.releaseDate ? vals.releaseDate.format("YYYY-MM-DD") : null,
+    duration: typeof vals.duration === "number" ? vals.duration : (vals.duration ? Number(vals.duration) : null),
+    imageUrl: vals.imageUrl,
+    rating: typeof vals.rating === "number" ? vals.rating : (vals.rating ? Number(vals.rating) : null),
+    status: vals.status,
+    contentRating: vals.contentRating || null,
+    directorId: vals.directorId ? Number(vals.directorId) : null,
+    genreIds: (vals.genreIds || []).map(Number),
+    languageIds: (vals.languageIds || []).map(Number),
+    countryIds: (vals.countryIds || []).map(Number),
+    // cast ayrı uçtan yönetiliyor
+  });
+
+  // --------- REFERANS LİSTELERİ ---------
   useEffect(() => {
     const params = { "pageable.page": 0, "pageable.size": 500, "pageable.sort": "name,asc" };
     Promise.all([
       api.get(endpoints.directors.list, { params }),
-      api.get(endpoints.genres.list, { params }),
+      api.get(endpoints.genres.list,    { params }),
       api.get(endpoints.languages.list, { params }),
       api.get(endpoints.countries.list, { params }),
-      api.get(endpoints.actors.list, { params }),
-    ]).then(([d,g,l,c,a]) => {
-      setDirectors(d.data?.data || []);
-      setGenres(g.data?.data || []);
-      setLanguages(l.data?.data || []);
-      setCountries(c.data?.data || []);
-      setActors(a.data?.data || []);
-    }).catch(()=>{});
+      api.get(endpoints.actors.list,    { params }),
+    ])
+      .then(([d,g,l,c,a]) => {
+        setDirectors(d.data?.data || []);
+        setGenres(g.data?.data || []);
+        setLanguages(l.data?.data || []);
+        setCountries(c.data?.data || []);
+        setActors(a.data?.data || []);
+      })
+      .catch(() => {});
   }, []);
 
-  // liste
+  // --------- MOVIE LİSTE ---------
   useEffect(() => {
     let alive = true;
     setLoadingList(true);
@@ -69,37 +113,25 @@ export default function MovieAdminPanel() {
       .then(res => {
         if (!alive) return;
         const data = res?.data?.data ?? [];
-        const totalElements = res?.data?.totalElements ?? res?.data?.data?.totalElements ?? res?.data?.total ?? 0;
+        const totalElements =
+          res?.data?.totalElements ??
+          res?.data?.data?.totalElements ??
+          0;
         setRows(data);
-        setTotal(totalElements ?? data.length);
+        setTotal(totalElements || data.length);
       })
       .finally(() => alive && setLoadingList(false));
     return () => { alive = false; };
   }, [JSON.stringify(listParams)]);
 
-  const toInitialForm = (m) => ({
-    title: m?.title,
-    description: m?.description,
-    releaseDate: m?.releaseDate ? dayjs(m.releaseDate) : null,
-    duration: m?.duration,
-    imageUrl: m?.imageUrl,
-    rating: m?.rating,
-    status: m?.status,
-    contentRating: m?.contentRating,
-    directorId: m?.directorId,
-    genreIds: (m?.genres || []).map(x => x.id),
-    languageIds: (m?.languages || []).map(x => x.id),
-    countryIds: (m?.countries || []).map(x => x.id),
-  });
-
+  // --------- TEK KAYIT + CAST ---------
   const loadOne = async (id) => {
     setLoadingOne(true);
     try {
       const { data } = await api.get(endpoints.movies.byId(id));
       const m = data?.data;
-      form.setFieldsValue(toInitialForm(m));
-      // cast
-      loadCast(id);
+      form.setFieldsValue(toFormValues(m));
+      await loadCast(id);
     } finally {
       setLoadingOne(false);
     }
@@ -117,11 +149,12 @@ export default function MovieAdminPanel() {
     }
   };
 
+  // --------- SEÇİM / YENİ EKLE ---------
   const onSelect = (id) => {
     setSelectedId(id);
     setMode("edit");
     form.resetFields();
-    loadOne(id).catch(()=>{});
+    loadOne(id).catch(() => {});
   };
 
   const onAddNew = () => {
@@ -129,56 +162,69 @@ export default function MovieAdminPanel() {
     setMode("create");
     form.resetFields();
     setCast([]);
+    setEditingCastId(null);
+    castForm.resetFields();
   };
 
-  const submit = async (vals) => {
+  // --------- CREATE/UPDATE ---------
+  const onSubmit = async (vals) => {
     setSaving(true);
     try {
-      const body = {
-        title: vals.title,
-        description: vals.description,
-        releaseDate: vals.releaseDate ? vals.releaseDate.format("YYYY-MM-DD") : null,
-        duration: vals.duration,
-        imageUrl: vals.imageUrl,
-        rating: vals.rating,
-        status: vals.status,
-        contentRating: vals.contentRating,
-        directorId: vals.directorId,
-        genreIds: vals.genreIds || [],
-        languageIds: vals.languageIds || [],
-        countryIds: vals.countryIds || [],
-        cast: undefined, // cast ayrı yönetiliyor
-      };
+      const body = toRequestBody(vals);
+      console.debug("[MOVIE] submit body:", mode, selectedId, body);
 
       if (mode === "create") {
         const { data } = await api.post(endpoints.movies.create, body);
+        console.debug("[MOVIE] POST /create OK", data);
         const newId = data?.data?.id;
         message.success("Movie created");
-        if (newId) onSelect(newId); else onAddNew();
-        // listeyi tazele
-        setPage(1);
-        setQ(q => q);
-      } else {
+        if (newId) {
+          onSelect(newId);
+          setPage(1);
+          setQ(_ => _);
+        } else {
+          onAddNew();
+        }
+      } else if (selectedId) {
         await api.put(endpoints.movies.update(selectedId), body);
+        console.debug("[MOVIE] PUT /update OK");
         message.success("Saved");
-        setQ(q => q);
+        setQ(_ => _);
       }
     } catch (e) {
-      message.error(e?.response?.data?.message || e.message);
+      console.error("[MOVIE] save error:", e);
+      message.error(e?.response?.data?.message || e.message || "Save failed");
     } finally {
       setSaving(false);
     }
   };
 
-  const removeMovie = async () => {
-    if (!selectedId) return;
-    await api.delete(endpoints.movies.delete(selectedId));
-    message.success("Deleted");
-    onAddNew();
-    setQ(q => q);
+  // onFinish bazen hiç tetiklenmiyormuş gibi hissedildiği durumlar için
+  const handleSaveClick = async () => {
+    try {
+      const vals = await form.validateFields();
+      await onSubmit(vals);
+    } catch (err) {
+      if (err?.errorFields?.length) {
+        message.error(err.errorFields[0]?.errors?.[0] || "Please check the form");
+        form.scrollToField(err.errorFields[0].name);
+      }
+    }
   };
 
-  // CAST ops
+  const removeMovie = async () => {
+    if (!selectedId) return;
+    try {
+      await api.delete(endpoints.movies.delete(selectedId));
+      message.success("Deleted");
+      onAddNew();
+      setQ(_ => _);
+    } catch (e) {
+      message.error(e?.response?.data?.message || e.message || "Delete failed");
+    }
+  };
+
+  // --------- CAST CRUD ---------
   const submitCast = async (vals) => {
     if (!selectedId) return;
     setSavingCast(true);
@@ -199,7 +245,7 @@ export default function MovieAdminPanel() {
       setEditingCastId(null);
       await loadCast(selectedId);
     } catch (e) {
-      message.error(e?.response?.data?.message || e.message);
+      message.error(e?.response?.data?.message || e.message || "Cast save failed");
     } finally {
       setSavingCast(false);
     }
@@ -207,13 +253,18 @@ export default function MovieAdminPanel() {
 
   const deleteCast = async (castId) => {
     if (!selectedId) return;
-    await api.delete(endpoints.movies.cast.delete(selectedId, castId));
-    message.success("Cast deleted");
-    await loadCast(selectedId);
+    try {
+      await api.delete(endpoints.movies.cast.delete(selectedId, castId));
+      message.success("Cast deleted");
+      await loadCast(selectedId);
+    } catch (e) {
+      message.error(e?.response?.data?.message || e.message || "Cast delete failed");
+    }
   };
 
   const startEditCast = (row) => {
-    setEditingCastId(row.id ?? row.castId);
+    const cid = row.id ?? row.castId;
+    setEditingCastId(cid);
     castForm.setFieldsValue({
       actorId: row.actorId,
       roleName: row.roleName,
@@ -223,10 +274,11 @@ export default function MovieAdminPanel() {
 
   return (
     <Row gutter={16}>
+      {/* --------- SOL: MOVIE LİSTE --------- */}
       <Col xs={24} md={10} lg={9}>
         <Card
           title="Movies"
-          extra={<a onClick={onAddNew}>Add Movie</a>}
+          extra={<Button type="link" onClick={onAddNew}>Add Movie</Button>}
         >
           <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
             <Input.Search
@@ -236,6 +288,14 @@ export default function MovieAdminPanel() {
               onChange={(e) => { setQ(e.target.value); setPage(1); }}
               onSearch={(v) => { setQ(v); setPage(1); }}
             />
+            <Select
+              allowClear
+              placeholder="Status"
+              style={{ width: 140 }}
+              value={statusFilter}
+              onChange={(v) => { setStatusFilter(v); setPage(1); }}
+              options={[{label:"All", value: undefined}, ...STATUS_OPTS].filter(x => x.value !== undefined)}
+            />
           </div>
 
           <Table
@@ -243,13 +303,19 @@ export default function MovieAdminPanel() {
             loading={loadingList}
             size="small"
             columns={[
-              { title: "Title", dataIndex: "title" },
+              { title: "Title", dataIndex: "title", ellipsis: true },
               { title: "Release", dataIndex: "releaseDate", width: 110 },
               { title: "Rating", dataIndex: "rating", width: 90 },
-              { title: "Status", dataIndex: "status", width: 120 },
+              {
+                title: "Status", dataIndex: "status", width: 120,
+                render: (s) => s ? <Tag color={s==="RELEASED"?"green":s==="UPCOMING"?"blue":"red"}>{s}</Tag> : "-"
+              },
             ]}
             dataSource={rows}
-            onRow={(record) => ({ onClick: () => onSelect(record.id) })}
+            onRow={(record) => ({
+              onClick: () => onSelect(record.id),
+              style: { cursor: "pointer" }
+            })}
             pagination={{
               current: page,
               pageSize,
@@ -271,17 +337,33 @@ export default function MovieAdminPanel() {
         </Card>
       </Col>
 
+      {/* --------- SAĞ: FORM + CAST --------- */}
       <Col xs={24} md={14} lg={15}>
-        <Card title={mode === "create" ? "Create Movie" : selectedId ? `Edit Movie #${selectedId}` : "Select a movie"}>
-          <Form layout="vertical" form={form} onFinish={submit} requiredMark={false}>
+        <Card
+          loading={loadingOne && mode==="edit"}
+          title={mode === "create" ? "Create Movie" : selectedId ? `Edit Movie #${selectedId}` : "Select a movie"}
+        >
+          <Form
+            layout="vertical"
+            form={form}
+            requiredMark={false}
+          >
             <Row gutter={12}>
               <Col xs={24} md={16}>
-                <Form.Item label="Title" name="title" rules={[{ required: true, message: "Required" }]}>
+                <Form.Item
+                  label="Title"
+                  name="title"
+                  rules={[{ required: true, message: "Required" }]}
+                >
                   <Input placeholder="Movie title" />
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item label="Release Date" name="releaseDate" rules={[{ required: true, message: "Required" }]}>
+                <Form.Item
+                  label="Release Date"
+                  name="releaseDate"
+                  rules={[{ required: true, message: "Required" }]}
+                >
                   <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
@@ -293,13 +375,13 @@ export default function MovieAdminPanel() {
 
             <Row gutter={12}>
               <Col xs={24} md={8}>
-                <Form.Item label="Duration (min)" name="duration" rules={[{ type: "number", min: 1, max: 600 }]}>
-                  <InputNumber style={{ width: "100%" }} />
+                <Form.Item label="Duration (min)" name="duration">
+                  <InputNumber min={1} max={600} style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item label="Rating (0-10)" name="rating" rules={[{ type: "number", min: 0, max: 10 }]}>
-                  <InputNumber step={0.1} style={{ width: "100%" }} />
+                <Form.Item label="Rating (0-10)" name="rating">
+                  <InputNumber min={0} max={10} step={0.1} style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
@@ -311,7 +393,11 @@ export default function MovieAdminPanel() {
 
             <Row gutter={12}>
               <Col xs={24} md={8}>
-                <Form.Item label="Status" name="status" rules={[{ required: true, message: "Required" }]}>
+                <Form.Item
+                  label="Status"
+                  name="status"
+                  rules={[{ required: true, message: "Required" }]}
+                >
                   <Select options={STATUS_OPTS} />
                 </Form.Item>
               </Col>
@@ -321,7 +407,11 @@ export default function MovieAdminPanel() {
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item label="Director" name="directorId">
+                <Form.Item
+                  label="Director"
+                  name="directorId"
+                  rules={[{ required: true, message: "Required" }]}
+                >
                   <Select
                     showSearch
                     allowClear
@@ -334,7 +424,11 @@ export default function MovieAdminPanel() {
 
             <Row gutter={12}>
               <Col xs={24} md={8}>
-                <Form.Item label="Genres" name="genreIds">
+                <Form.Item
+                  label="Genres"
+                  name="genreIds"
+                  rules={[{ required: true, message: "Required" }]}
+                >
                   <Select
                     mode="multiple"
                     allowClear
@@ -343,7 +437,11 @@ export default function MovieAdminPanel() {
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item label="Languages" name="languageIds">
+                <Form.Item
+                  label="Languages"
+                  name="languageIds"
+                  rules={[{ required: true, message: "Required" }]}
+                >
                   <Select
                     mode="multiple"
                     allowClear
@@ -352,7 +450,11 @@ export default function MovieAdminPanel() {
                 </Form.Item>
               </Col>
               <Col xs={24} md={8}>
-                <Form.Item label="Countries" name="countryIds">
+                <Form.Item
+                  label="Countries"
+                  name="countryIds"
+                  rules={[{ required: true, message: "Required" }]}
+                >
                   <Select
                     mode="multiple"
                     allowClear
@@ -363,7 +465,11 @@ export default function MovieAdminPanel() {
             </Row>
 
             <Space style={{ marginTop: 8 }}>
-              <Button type="primary" htmlType="submit" loading={saving}>
+              <Button
+                type="primary"
+                loading={saving}
+                onClick={handleSaveClick}
+              >
                 {mode === "create" ? "Create" : "Save"}
               </Button>
               <Button htmlType="button" onClick={() => form.resetFields()}>Reset</Button>
@@ -375,7 +481,7 @@ export default function MovieAdminPanel() {
             </Space>
           </Form>
 
-          {/* CAST */}
+          {/* ---- CAST PANEL (sadece edit modunda) ---- */}
           {mode === "edit" && selectedId && (
             <>
               <Divider />
@@ -388,20 +494,18 @@ export default function MovieAdminPanel() {
                       renderItem={(it) => (
                         <List.Item
                           actions={[
-                            <a onClick={() => startEditCast(it)}>Edit</a>,
+                            <Button type="link" onClick={() => startEditCast(it)}>Edit</Button>,
                             <Popconfirm title="Remove cast?" onConfirm={() => deleteCast(it.id ?? it.castId)}>
-                              <a style={{ color: "#ff4d4f" }}>Delete</a>
+                              <Button type="link" danger>Delete</Button>
                             </Popconfirm>
                           ]}
                         >
                           <List.Item.Meta
-                            title={it.actorName}
-                            description={
-                              <>
-                                {it.roleName ? `${it.roleName}` : ""}{it.roleName && typeof it.castOrder === "number" ? " • " : ""}
-                                {typeof it.castOrder === "number" ? `#${it.castOrder}` : ""}
-                              </>
-                            }
+                            title={<Space split={<Text type="secondary">•</Text>}>
+                              <Text strong>{it.actorName}</Text>
+                              {it.roleName && <Text>{it.roleName}</Text>}
+                            </Space>}
+                            description={typeof it.castOrder === "number" ? `Order #${it.castOrder}` : ""}
                           />
                         </List.Item>
                       )}
@@ -428,9 +532,7 @@ export default function MovieAdminPanel() {
                         <Button type="primary" htmlType="submit" loading={savingCast}>
                           {editingCastId ? "Save" : "Add"}
                         </Button>
-                        <Button
-                          onClick={() => { setEditingCastId(null); castForm.resetFields(); }}
-                        >
+                        <Button onClick={() => { setEditingCastId(null); castForm.resetFields(); }}>
                           Clear
                         </Button>
                       </Space>

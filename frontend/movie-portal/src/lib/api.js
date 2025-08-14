@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 import { getToken, setToken } from "../auth/auth";
 
-const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8081").replace(/\/+$/,"");
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/+$/,"");
 
 // ---- ENDPOINTS (v1) ----
 export const endpoints = {
@@ -11,33 +11,35 @@ export const endpoints = {
     refresh:"/api/v1/auth/refresh",
     logout: "/api/v1/auth/logout",
   },
-ai: {
+  ai: {
     comment: (movieId) => `/api/v1/movies/${movieId}/ai/comment`,
     stream:  (movieId) => `/api/v1/movies/${movieId}/ai/comment/stream`,
     clearCache: `/api/v1/ai/cache/comments`,
   },
   movies: {
     search: "/api/v1/movies",
+    create: "/api/v1/movies",
     byId:   (id) => `/api/v1/movies/${id}`,
+    update: (id) => `/api/v1/movies/${id}`,
+    delete: (id) => `/api/v1/movies/${id}`,
     cast: {
-      list:   (movieId)         => `/api/v1/movies/${movieId}/cast`,
-      add:    (movieId)         => `/api/v1/movies/${movieId}/cast`,
-      update: (movieId, castId) => `/api/v1/movies/${movieId}/cast/${castId}`,
-      delete: (movieId, castId) => `/api/v1/movies/${movieId}/cast/${castId}`,
+      list:   (movieId)         => `/api/v1/movies/${movieId}/cast`,              // GET (list_1)
+      add:    (movieId)         => `/api/v1/movies/${movieId}/cast`,              // POST (add)
+      update: (movieId, castId) => `/api/v1/movies/${movieId}/cast/${castId}`,    // PUT  (update)
+      delete: (movieId, castId) => `/api/v1/movies/${movieId}/cast/${castId}`,    // DELETE(delete)
     },
   },
   comments: {
-    list:   (movieId)       => `/api/v1/movies/${movieId}/comments`,       
-    add:    (movieId)       => `/api/v1/movies/${movieId}/comments`,              
-    update: (movieId, id)   => `/api/v1/movies/${movieId}/comments/${id}`,        
-    delete: (movieId, id)   => `/api/v1/movies/${movieId}/comments/${id}`,        
+    list:   (movieId)       => `/api/v1/movies/${movieId}/comments`,
+    add:    (movieId)       => `/api/v1/movies/${movieId}/comments`,
+    update: (movieId, id)   => `/api/v1/movies/${movieId}/comments/${id}`,
+    delete: (movieId, id)   => `/api/v1/movies/${movieId}/comments/${id}`,
   },
   genres:    { list: "/api/v1/genres" },
   countries: { list: "/api/v1/countries" },
   directors: { list: "/api/v1/directors" },
   actors:    { list: "/api/v1/actors" },
   languages: { list: "/api/v1/languages" },
-
   lists: {
     me:       "/api/v1/lists/me",
     add:      (userId) => `/api/v1/lists/${userId}`,
@@ -46,18 +48,16 @@ ai: {
     reorder:  (userId) => `/api/v1/lists/${userId}/reorder`,
     clear:    (userId) => `/api/v1/lists/${userId}/clear`,
   },
-
   users: {
     search: "/api/v1/users",
     get:    (id) => `/api/v1/users/${id}`,
     patch:  (id) => `/api/v1/users/${id}`,
     create: "/api/v1/users",
     delete: (id) => `/api/v1/users/${id}`,
-    // not: spec’te /me yok; gerekiyorsa backend ekleriz
   },
-
   roles: { list: "/api/v1/roles" },
 };
+
 
 // ---- axios ----
 export const api = axios.create({

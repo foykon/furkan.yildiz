@@ -98,7 +98,7 @@ public class MovieServiceImpl implements MovieService {
         Page<Movie> page = movieRepository.findAll(specification, pageable);
 
         var items = page.getContent().stream()
-                .map(this::toResponseLite)   // liste için küçük dönüşüm
+                .map(this::toResponseLite)
                 .collect(Collectors.toList());
 
         return new PagedDataResult<>(

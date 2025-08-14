@@ -39,6 +39,11 @@ function FiltersPanel({ genres, countries, directors, defaultTitle, onApply, onC
   const [maxYear, setMaxYear] = useState();
   const [rating, setRating] = useState(0);
   const [sort, setSort] = useState("title,asc");
+  const yearToDate = (y, end=false) => {
+    if (!y) return null;
+    const year = String(y).padStart(4, "0");
+    return end ? `${year}-12-31` : `${year}-01-01`;
+  };
 
   const apply = () => {
     const qs = new URLSearchParams();
@@ -46,8 +51,8 @@ function FiltersPanel({ genres, countries, directors, defaultTitle, onApply, onC
     if (genreId) qs.set("genreId", String(genreId));
     if (countryId) qs.set("countryId", String(countryId));
     if (directorId) qs.set("directorId", String(directorId));
-    if (minYear) qs.set("minYear", String(minYear));
-    if (maxYear) qs.set("maxYear", String(maxYear));
+    if (minYear) qs.set("releaseDateFrom", yearToDate(minYear, false));
+    if (maxYear) qs.set("releaseDateTo",   yearToDate(maxYear, true));
     if (rating > 0) qs.set("minRating", String(rating));
     qs.set("sort", sort);
     qs.set("page", "1");
@@ -76,7 +81,7 @@ function FiltersPanel({ genres, countries, directors, defaultTitle, onApply, onC
         <div className="label">Sort</div>
         <Segmented value={sort} onChange={setSort} options={[
           { label:"Title A→Z", value:"title,asc" },
-          { label:"Year ↓",    value:"year,desc" },
+    { label:"Year ↓",    value:"releaseDate,desc" },
           { label:"Rating ↓",  value:"rating,desc" },
         ]}/>
       </div>
