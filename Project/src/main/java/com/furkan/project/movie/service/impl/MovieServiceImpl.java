@@ -2,6 +2,7 @@ package com.furkan.project.movie.service.impl;
 
 import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.movie.dto.country.CountryResponse;
 import com.furkan.project.movie.dto.genre.GenreResponse;
 import com.furkan.project.movie.dto.language.LanguageResponse;
@@ -40,7 +41,7 @@ public class MovieServiceImpl implements MovieService {
     private final LanguageRepository languageRepository;
     private final CountryRepository countryRepository;
     private final ActorRepository actorRepository;
-
+    private final MessageService messages;
     private final MovieValidator movieValidator;
 
     // ============== CREATE ==============
@@ -57,9 +58,9 @@ public class MovieServiceImpl implements MovieService {
             movie = movieRepository.save(movie);
 
             Movie detail = movieRepository.findDetailById(movie.getId()).orElse(movie);
-            return new SuccessDataResult<>(toResponse(detail), "movie.created");
+            return new SuccessDataResult<>(toResponse(detail), messages.get("movie.created"));
         } catch (Exception ex) {
-            return new ErrorDataResult<>(null, "movie.create.failed");
+            return new ErrorDataResult<>(null, messages.get("movie.create.failed"));
         }
     }
 
@@ -69,9 +70,9 @@ public class MovieServiceImpl implements MovieService {
     public DataResult<MovieResponse> getById(Long id) {
         var optionalMovie = movieRepository.findDetailById(id);
         if (optionalMovie.isEmpty()) {
-            return new ErrorDataResult<>(null, "movie.notfound");
+            return new ErrorDataResult<>(null, messages.get("movie.notfound"));
         }
-        return new SuccessDataResult<>(toResponse(optionalMovie.get()), "movie.found");
+        return new SuccessDataResult<>(toResponse(optionalMovie.get()), messages.get("movie.found"));
     }
 
     // ============== SEARCH (paged) ==============
@@ -108,7 +109,7 @@ public class MovieServiceImpl implements MovieService {
                 page.getTotalElements(),
                 page.getTotalPages(),
                 true,
-                "movie.search.ok"
+                messages.get("movie.search.ok")
         );
     }
 
@@ -122,19 +123,19 @@ public class MovieServiceImpl implements MovieService {
 
         try {
             Movie movie = movieRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("movie.notfound"));
+                    .orElseThrow(() -> new IllegalArgumentException(messages.get("movie.notfound")));
 
             if (Boolean.TRUE.equals(movie.isDeleted())) {
-                return new ErrorDataResult<>(null, "movie.deleted");
+                return new ErrorDataResult<>(null, messages.get("movie.deleted"));
             }
 
             applyUpsert(movie, movieRequest);
             movie = movieRepository.save(movie);
 
             Movie detail = movieRepository.findDetailById(movie.getId()).orElse(movie);
-            return new SuccessDataResult<>(toResponse(detail), "movie.updated");
+            return new SuccessDataResult<>(toResponse(detail), messages.get("movie.updated"));
         } catch (Exception ex) {
-            return new ErrorDataResult<>(null, "movie.update.failed");
+            return new ErrorDataResult<>(null, messages.get("movie.update.failed"));
         }
     }
 
@@ -144,14 +145,14 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.findById(id)
                 .map(movie -> {
                     if (Boolean.TRUE.equals(movie.isDeleted())) {
-                        return new ErrorResult("movie.already.deleted");
+                        return new ErrorResult(messages.get("movie.already.deleted"));
                     }
                     movie.setDeleted(true);
                     movie.setDeletedAt(Instant.now());
                     movieRepository.save(movie);
-                    return new SuccessResult("movie.deleted.ok");
+                    return new SuccessResult(messages.get("movie.deleted.ok"));
                 })
-                .orElseGet(() -> new ErrorResult("movie.notfound"));
+                .orElseGet(() -> new ErrorResult(messages.get("movie.notfound")));
     }
 
     // =========================================================
@@ -208,7 +209,7 @@ public class MovieServiceImpl implements MovieService {
 
     private Director fetchDirector(Long directorId) {
         return directorRepository.findById(directorId)
-                .orElseThrow(() -> new IllegalArgumentException("director.notfound"));
+                .orElseThrow(() -> new IllegalArgumentException(messages.get("director.notfound")));
     }
 
     private Set<Genre> fetchGenres(Set<Long> genreIds) {
@@ -225,7 +226,7 @@ public class MovieServiceImpl implements MovieService {
 
     private Actor fetchActor(Long actorId) {
         return actorRepository.findById(actorId)
-                .orElseThrow(() -> new IllegalArgumentException("actor.notfound:" + actorId));
+                .orElseThrow(() -> new IllegalArgumentException(messages.get("actor.notfound:") + actorId));
     }
 
     private MovieResponse toResponse(Movie movie) {

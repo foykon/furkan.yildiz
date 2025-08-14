@@ -7,6 +7,7 @@ import com.furkan.project.comment.mapper.CommentMapper;
 import com.furkan.project.comment.repository.CommentRepository;
 import com.furkan.project.comment.service.CommentCommandService;
 import com.furkan.project.common.security.CurrentUserHelper;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.movie.api.MovieApiService;
 import com.furkan.project.user.api.UserApiService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,16 +24,16 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final MovieApiService movieApi;
     private final UserApiService userApi;
     private final CommentMapper mapper;
-    private final CurrentUserHelper current;
+    private final CurrentUserHelper current;private final MessageService messages;
 
     @Override
     public CommentResponse create(Long movieId, CommentRequest request) {
-        if (!movieApi.existsById(movieId)) throw new EntityNotFoundException("movie.notFound");
+        if (!movieApi.existsById(movieId)) throw new EntityNotFoundException(messages.get("movie.notFound"));
 
         Long userId = current.getIdOrNull();
-        if (userId == null) throw new SecurityException("auth.required");
+        if (userId == null) throw new SecurityException(messages.get("auth.required"));
 
-        if (!userApi.existsById(userId)) throw new EntityNotFoundException("user.notFound");
+        if (!userApi.existsById(userId)) throw new EntityNotFoundException(messages.get("user.notFound"));
 
         Comment c = new Comment();
         c.setMovieId(movieId);
@@ -47,14 +48,14 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     @Override
     public CommentResponse update(Long movieId, Long commentId, CommentRequest request) {
         var c = commentRepository.findByIdAndMovieIdAndDeletedFalse(commentId, movieId)
-                .orElseThrow(() -> new EntityNotFoundException("comment.notFound"));
+                .orElseThrow(() -> new EntityNotFoundException(messages.get("comment.notFound")));
 
         Long userId = current.getIdOrNull();
-        if (userId == null) throw new SecurityException("auth.required");
+        if (userId == null) throw new SecurityException(messages.get("auth.required"));
 
         boolean isOwner = userId.equals(c.getUserId());
         boolean isAdmin = current.hasRole("ROLE_ADMIN");
-        if (!isOwner && !isAdmin) throw new SecurityException("forbidden");
+        if (!isOwner && !isAdmin) throw new SecurityException(messages.get("forbidden"));
 
         c.setContent(request.getContent());
         String username = userApi.getUserNameById(c.getUserId());
@@ -64,14 +65,14 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     @Override
     public void delete(Long movieId, Long commentId) {
         var c = commentRepository.findByIdAndMovieIdAndDeletedFalse(commentId, movieId)
-                .orElseThrow(() -> new EntityNotFoundException("comment.notFound"));
+                .orElseThrow(() -> new EntityNotFoundException(messages.get("comment.notFound")));
 
         Long userId = current.getIdOrNull();
-        if (userId == null) throw new SecurityException("auth.required");
+        if (userId == null) throw new SecurityException(messages.get("auth.required"));
 
         boolean isOwner = userId.equals(c.getUserId());
         boolean isAdmin = current.hasRole("ROLE_ADMIN");
-        if (!isOwner && !isAdmin) throw new SecurityException("forbidden");
+        if (!isOwner && !isAdmin) throw new SecurityException(messages.get("forbidden"));
 
         c.setDeleted(true);
     }

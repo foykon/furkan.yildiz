@@ -2,6 +2,7 @@ package com.furkan.project.movie.service.impl;
 
 import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.movie.dto.country.CountryRequest;
 import com.furkan.project.movie.dto.country.CountryResponse;
 import com.furkan.project.movie.entity.Country;
@@ -22,17 +23,17 @@ import java.util.stream.Collectors;
 public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
-
+    private final MessageService messages;
     @Override
     public DataResult<CountryResponse> create(CountryRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
-            return new ErrorDataResult<CountryResponse>(null, "country.name.required");
+            return new ErrorDataResult<CountryResponse>(null, messages.get("country.name.required"));
         }
         Country saved = countryRepository.save(Country.builder()
                 .name(request.getName().trim())
                 .build());
 
-        return new SuccessDataResult<>(new CountryResponse(saved.getId(), saved.getName()), "country.created");
+        return new SuccessDataResult<>(new CountryResponse(saved.getId(), saved.getName()), messages.get("country.created"));
     }
 
     @Override
@@ -40,10 +41,10 @@ public class CountryServiceImpl implements CountryService {
     public DataResult<CountryResponse> get(Long id) {
         var optional = countryRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<CountryResponse>(null, "country.notfound");
+            return new ErrorDataResult<CountryResponse>(null, messages.get("country.notfound"));
         }
         Country country = optional.get();
-        return new SuccessDataResult<>(new CountryResponse(country.getId(), country.getName()), "country.found");
+        return new SuccessDataResult<>(new CountryResponse(country.getId(), country.getName()), messages.get("country.found"));
     }
 
     @Override
@@ -64,7 +65,7 @@ public class CountryServiceImpl implements CountryService {
                 page.getSize(),
                 page.getTotalElements(),
                 page.getTotalPages(),
-                "country.list.ok"
+                messages.get("country.list.ok")
         );
     }
 
@@ -72,22 +73,22 @@ public class CountryServiceImpl implements CountryService {
     public DataResult<CountryResponse> update(Long id, CountryRequest request) {
         var optional = countryRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<CountryResponse>(null, "country.notfound");
+            return new ErrorDataResult<CountryResponse>(null, messages.get("country.notfound"));
         }
         Country country = optional.get();
         if (request.getName() != null && !request.getName().isBlank()) {
             country.setName(request.getName().trim());
         }
         Country saved = countryRepository.save(country);
-        return new SuccessDataResult<>(new CountryResponse(saved.getId(), saved.getName()), "country.updated");
+        return new SuccessDataResult<>(new CountryResponse(saved.getId(), saved.getName()), messages.get("country.updated"));
     }
 
     @Override
     public Result delete(Long id) {
         if (!countryRepository.existsById(id)) {
-            return new ErrorResult("country.notfound");
+            return new ErrorResult(messages.get("country.notfound"));
         }
         countryRepository.deleteById(id);
-        return new SuccessResult("country.deleted");
+        return new SuccessResult(messages.get("country.deleted"));
     }
 }

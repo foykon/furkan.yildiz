@@ -2,6 +2,7 @@ package com.furkan.project.movie.service.impl;
 
 import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.movie.dto.director.DirectorRequest;
 import com.furkan.project.movie.dto.director.DirectorResponse;
 import com.furkan.project.movie.entity.Director;
@@ -22,17 +23,17 @@ import java.util.stream.Collectors;
 public class DirectorServiceImpl implements DirectorService {
 
     private final DirectorRepository directorRepository;
-
+    private final MessageService messages;
     @Override
     public DataResult<DirectorResponse> create(DirectorRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
-            return new ErrorDataResult<>(null, "director.name.required");
+            return new ErrorDataResult<>(null, messages.get("director.name.required"));
         }
         Director saved = directorRepository.save(Director.builder()
                 .name(request.getName().trim())
                 .build());
 
-        return new SuccessDataResult<>(new DirectorResponse(saved.getId(), saved.getName(), saved.getNationality()), "director.created");
+        return new SuccessDataResult<>(new DirectorResponse(saved.getId(), saved.getName(), saved.getNationality()), messages.get("director.created"));
     }
 
     @Override
@@ -40,10 +41,10 @@ public class DirectorServiceImpl implements DirectorService {
     public DataResult<DirectorResponse> get(Long id) {
         var optional = directorRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<>(null, "director.notfound");
+            return new ErrorDataResult<>(null, messages.get("director.notfound"));
         }
         Director director = optional.get();
-        return new SuccessDataResult<>(new DirectorResponse(director.getId(), director.getName(), director.getNationality()), "director.found");
+        return new SuccessDataResult<>(new DirectorResponse(director.getId(), director.getName(), director.getNationality()),messages.get( "director.found"));
     }
 
     @Override
@@ -64,7 +65,7 @@ public class DirectorServiceImpl implements DirectorService {
                 page.getSize(),
                 page.getTotalElements(),
                 page.getTotalPages(),
-                "director.list.ok"
+                messages.get("director.list.ok")
         );
     }
 
@@ -72,23 +73,23 @@ public class DirectorServiceImpl implements DirectorService {
     public DataResult<DirectorResponse> update(Long id, DirectorRequest request) {
         var optional = directorRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<DirectorResponse>(null, "director.notfound");
+            return new ErrorDataResult<DirectorResponse>(null, messages.get("director.notfound"));
         }
         Director director = optional.get();
         if (request.getName() != null && !request.getName().isBlank()) {
             director.setName(request.getName().trim());
         }
         Director saved = directorRepository.save(director);
-        return new SuccessDataResult<>(new DirectorResponse(saved.getId(), saved.getName(), saved.getNationality()), "director.updated");
+        return new SuccessDataResult<>(new DirectorResponse(saved.getId(), saved.getName(), saved.getNationality()), messages.get("director.updated"));
     }
 
     @Override
     public Result delete(Long id) {
         if (!directorRepository.existsById(id)) {
-            return new ErrorResult("director.notfound");
+            return new ErrorResult(messages.get("director.notfound"));
         }
         directorRepository.deleteById(id);
-        return new SuccessResult("director.deleted");
+        return new SuccessResult(messages.get("director.deleted"));
     }
 }
 

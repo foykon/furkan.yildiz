@@ -1,6 +1,7 @@
 package com.furkan.project.list.service.impl;
 
 import com.furkan.project.common.result.*;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.list.dto.request.AddListItemRequest;
 import com.furkan.project.list.dto.request.ListFilterRequest;
 import com.furkan.project.list.dto.request.ReorderRequest;
@@ -29,8 +30,9 @@ public class ListServiceImpl implements ListService {
 
     private final UserListItemRepository listRepository;
     private final ListValidator validator;
-    private final UserApiService userApi;     // şu an sadece validator kullanıyor ama ileride işine yarar
+    private final UserApiService userApi;
     private final MovieApiService movieApi;
+    private final MessageService messages;
 
     // ============== ADD (restore-aware) ==============
     @Override
@@ -38,17 +40,13 @@ public class ListServiceImpl implements ListService {
         var v = validator.validateAdd(userId, req);
         if (!v.isSuccess()) return new ErrorDataResult<>(null, v.getMessage());
 
-        // 1) Silinmiş kayıt varsa "restore" et (orderIndex null gelirse dokunma)
-        //  -> Bu satır repository'de küçük bir update methodu gerektirir (aşağıda imzası var).
         int restored = listRepository.restoreOne(userId, req.getMovieId(), req.getType(), req.getOrderIndex());
 
         if (restored == 0) {
-            // 2) Aktif kayıt var mı?
             var existingOpt = listRepository.findByUserIdAndMovieIdAndTypeAndDeletedFalse(
                     userId, req.getMovieId(), req.getType());
 
             if (existingOpt.isPresent()) {
-                // İdempotent: sadece orderIndex değişmişse güncelle
                 var existing = existingOpt.get();
                 Integer idx = req.getOrderIndex();
                 if (idx != null && !Objects.equals(existing.getOrderIndex(), idx)) {
@@ -56,23 +54,21 @@ public class ListServiceImpl implements ListService {
                     listRepository.save(existing);
                 }
             } else {
-                // 3) İlk kez ekleme
                 UserListItem li = new UserListItem();
                 li.setUserId(userId);
                 li.setMovieId(req.getMovieId());
                 li.setType(req.getType());
-                li.setOrderIndex(req.getOrderIndex()); // Integer, null olabilir
+                li.setOrderIndex(req.getOrderIndex());
                 listRepository.save(li);
             }
         }
 
-        // 4) Aktif kaydı çek ve response dön
         var entity = listRepository.findByUserIdAndMovieIdAndTypeAndDeletedFalse(
                 userId, req.getMovieId(), req.getType()
-        ).orElseThrow(() -> new IllegalStateException("list.add.failed"));
+        ).orElseThrow(() -> new IllegalStateException(messages.get("list.add.failed")));
 
         MovieSummary ms = movieApi.getSummary(req.getMovieId());
-        return new SuccessDataResult<>(toResponse(entity, ms), "list.added");
+        return new SuccessDataResult<>(toResponse(entity, ms), messages.get("list.added"));
     }
 
     // ============== REMOVE (idempotent) ==============
@@ -81,18 +77,18 @@ public class ListServiceImpl implements ListService {
         var v = validator.validateRemove(userId, movieId, type);
         if (!v.isSuccess()) return v;
         listRepository.softDeleteOne(userId, movieId, type); // idempotent
-        return new SuccessResult("list.removed");
+        return new SuccessResult(messages.get("list.removed"));
     }
 
-    // ============== GET LIST (q destekli) ==============
+    // ============== GET LIST (q) ==============
     @Transactional(readOnly = true)
     @Override
     public PagedDataResult<ListItemResponse> getList(Long userId, ListType type, ListFilterRequest filter, Pageable pageable) {
         if (userId == null) {
-            return new PagedDataResult<>(List.of(), 0, pageable.getPageSize(), 0, 0, false, "user.id.required");
+            return new PagedDataResult<>(List.of(), 0, pageable.getPageSize(), 0, 0, false, messages.get("user.id.required"));
         }
         if (type == null) {
-            return new PagedDataResult<>(List.of(), 0, pageable.getPageSize(), 0, 0, false, "list.type.required");
+            return new PagedDataResult<>(List.of(), 0, pageable.getPageSize(), 0, 0, false, messages.get("list.type.required"));
         }
 
         String q = (filter != null && filter.getQ() != null) ? filter.getQ().trim() : null;
@@ -141,7 +137,7 @@ public class ListServiceImpl implements ListService {
         }
     }
 
-    // ============== REORDER (opsiyonel) ==============
+    // ============== REORDER ==============
     @Override
     public Result reorder(Long userId, ReorderRequest request) {
         var v = validator.validateReorder(userId, request);
@@ -165,10 +161,10 @@ public class ListServiceImpl implements ListService {
             if (target.containsKey(key)) li.setOrderIndex(target.get(key));
         });
 
-        return new SuccessResult("reordered");
+        return new SuccessResult(messages.get("reordered"));
     }
 
-    // ============== CLEAR (opsiyonel) ==============
+    // ============== CLEAR ==============
     @Override
     public Result clear(Long userId, ListType type) {
         if (userId == null || type == null) return new ErrorResult("bad.request");

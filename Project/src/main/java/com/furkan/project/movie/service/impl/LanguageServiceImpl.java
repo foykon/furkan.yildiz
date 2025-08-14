@@ -2,6 +2,7 @@ package com.furkan.project.movie.service.impl;
 
 import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.movie.dto.language.LanguageRequest;
 import com.furkan.project.movie.dto.language.LanguageResponse;
 import com.furkan.project.movie.entity.Language;
@@ -22,14 +23,14 @@ import java.util.stream.Collectors;
 public class LanguageServiceImpl implements LanguageService {
 
     private final LanguageRepository languageRepository;
-
+    private final MessageService messages;
     @Override
     public DataResult<LanguageResponse> create(LanguageRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
-            return new ErrorDataResult<LanguageResponse>(null, "language.name.required");
+            return new ErrorDataResult<LanguageResponse>(null, messages.get("language.name.required"));
         }
         if (request.getIsoCode() == null || request.getIsoCode().isBlank()) {
-            return new ErrorDataResult<LanguageResponse>(null, "language.iso.required");
+            return new ErrorDataResult<LanguageResponse>(null, messages.get("language.iso.required"));
         }
         Language saved = languageRepository.save(Language.builder()
                 .name(request.getName().trim())
@@ -37,7 +38,7 @@ public class LanguageServiceImpl implements LanguageService {
                 .build());
 
         return new SuccessDataResult<>(new LanguageResponse(saved.getId(), saved.getName(), saved.getIsoCode()),
-                "language.created");
+                messages.get("language.created"));
     }
 
     @Override
@@ -45,11 +46,11 @@ public class LanguageServiceImpl implements LanguageService {
     public DataResult<LanguageResponse> get(Long id) {
         var optional = languageRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<LanguageResponse>(null, "language.notfound");
+            return new ErrorDataResult<LanguageResponse>(null, messages.get("language.notfound"));
         }
         Language language = optional.get();
         return new SuccessDataResult<>(new LanguageResponse(language.getId(), language.getName(), language.getIsoCode()),
-                "language.found");
+                messages.get("language.found"));
     }
 
     @Override
@@ -70,7 +71,7 @@ public class LanguageServiceImpl implements LanguageService {
                 page.getSize(),
                 page.getTotalElements(),
                 page.getTotalPages(),
-                "language.list.ok"
+                messages.get("language.list.ok")
         );
     }
 
@@ -78,7 +79,7 @@ public class LanguageServiceImpl implements LanguageService {
     public DataResult<LanguageResponse> update(Long id, LanguageRequest request) {
         var optional = languageRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<LanguageResponse>(null, "language.notfound");
+            return new ErrorDataResult<LanguageResponse>(null, messages.get("language.notfound"));
         }
         Language language = optional.get();
         if (request.getName() != null && !request.getName().isBlank()) {
@@ -89,15 +90,15 @@ public class LanguageServiceImpl implements LanguageService {
         }
         Language saved = languageRepository.save(language);
         return new SuccessDataResult<>(new LanguageResponse(saved.getId(), saved.getName(), saved.getIsoCode()),
-                "language.updated");
+                messages.get("language.updated"));
     }
 
     @Override
     public Result delete(Long id) {
         if (!languageRepository.existsById(id)) {
-            return new ErrorResult("language.notfound");
+            return new ErrorResult(messages.get("language.notfound"));
         }
         languageRepository.deleteById(id);
-        return new SuccessResult("language.deleted");
+        return new SuccessResult(messages.get("language.deleted"));
     }
 }

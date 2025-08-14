@@ -8,6 +8,7 @@ import com.furkan.project.auth.service.AuthService;
 import com.furkan.project.auth.service.RefreshCookieService;
 import com.furkan.project.auth.service.RefreshTokenService;
 import com.furkan.project.common.logging.LogExecution;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.user.entity.ERole;
 import com.furkan.project.user.entity.Role;
 import com.furkan.project.user.entity.User;
@@ -41,6 +42,7 @@ private final RoleRepository roleRepository;
     private final RefreshTokenService refreshTokens;
     private final RefreshCookieService refreshCookies;
     private final PasswordEncoder passwordEncoder;
+    private final MessageService messages;
 
     @Value("${app.refresh.expiration-sec:1209600}") // 14 gün
     private long refreshExpSec;
@@ -95,10 +97,10 @@ private final RoleRepository roleRepository;
     @Override
     public void signUp(SignUpRequest req) {
         if (userRepository.existsByUsername(req.username())) {
-            throw new IllegalArgumentException("auth.signup.username.taken");
+            throw new IllegalArgumentException(messages.get("auth.signup.username.taken"));
         }
         if (userRepository.existsByEmail(req.email())) {
-            throw new IllegalArgumentException("auth.signup.email.taken");
+            throw new IllegalArgumentException(messages.get("auth.signup.email.taken"));
         }
 
         var user = new User();
@@ -110,7 +112,7 @@ private final RoleRepository roleRepository;
         user.setDeleted(false);
 
         var roleUser = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new IllegalStateException("role.ROLE_USER.missing"));
+                .orElseThrow(() -> new IllegalStateException(messages.get("role.ROLE_USER.missing")));
         var roles = new LinkedHashSet<Role>();
         roles.add(roleUser);
         user.setRoles(roles);
@@ -125,7 +127,7 @@ private final RoleRepository roleRepository;
     }
     private com.furkan.project.user.entity.User loadUser(String username) {
         return userRepository.findWithRolesByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("auth.user.notfound"));
+                .orElseThrow(() -> new IllegalArgumentException(messages.get("auth.user.notfound")));
     }
     private java.util.Set<String> rolesOf(com.furkan.project.user.entity.User u) {
         return u.getRoles().stream().map(r -> r.getName().name()).collect(java.util.stream.Collectors.toSet());

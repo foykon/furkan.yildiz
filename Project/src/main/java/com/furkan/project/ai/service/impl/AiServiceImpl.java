@@ -67,7 +67,7 @@ public class AiServiceImpl implements AiService {
         return emitter;
     }
 
-    // AiServiceImpl (veya bir helper sınıfta)
+    // AiServiceImpl
     private List<Message> buildMessages(MovieSummaryForAi m, String username, String tone) {
         String sys = PromptTemplates.movieSystemPrompt();
 

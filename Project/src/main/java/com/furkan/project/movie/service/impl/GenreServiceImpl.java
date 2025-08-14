@@ -2,6 +2,7 @@ package com.furkan.project.movie.service.impl;
 
 import com.furkan.project.common.logging.LogExecution;
 import com.furkan.project.common.result.*;
+import com.furkan.project.common.service.MessageService;
 import com.furkan.project.movie.dto.genre.GenreRequest;
 import com.furkan.project.movie.dto.genre.GenreResponse;
 import com.furkan.project.movie.entity.Genre;
@@ -23,17 +24,17 @@ import java.util.stream.Collectors;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
-
+    private final MessageService messages;
     @Override
     public DataResult<GenreResponse> create(GenreRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
-            return new ErrorDataResult<GenreResponse>(null, "genre.name.required");
+            return new ErrorDataResult<GenreResponse>(null, messages.get("genre.name.required"));
         }
         Genre saved = genreRepository.save(Genre.builder()
                 .name(request.getName().trim())
                 .build());
 
-        return new SuccessDataResult<>(new GenreResponse(saved.getId(), saved.getName()), "genre.created");
+        return new SuccessDataResult<>(new GenreResponse(saved.getId(), saved.getName()), messages.get("genre.created"));
     }
 
     @Override
@@ -41,10 +42,10 @@ public class GenreServiceImpl implements GenreService {
     public DataResult<GenreResponse> get(Long id) {
         var optional = genreRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<GenreResponse>(null, "genre.notfound");
+            return new ErrorDataResult<GenreResponse>(null, messages.get("genre.notfound"));
         }
         Genre genre = optional.get();
-        return new SuccessDataResult<>(new GenreResponse(genre.getId(), genre.getName()), "genre.found");
+        return new SuccessDataResult<>(new GenreResponse(genre.getId(), genre.getName()), messages.get("genre.found"));
     }
 
     @Override
@@ -65,7 +66,7 @@ public class GenreServiceImpl implements GenreService {
                 page.getSize(),
                 page.getTotalElements(),
                 page.getTotalPages(),
-                "genre.list.ok"
+                messages.get("genre.list.ok")
         );
     }
 
@@ -73,22 +74,22 @@ public class GenreServiceImpl implements GenreService {
     public DataResult<GenreResponse> update(Long id, GenreRequest request) {
         var optional = genreRepository.findById(id);
         if (optional.isEmpty()) {
-            return new ErrorDataResult<GenreResponse>(null, "genre.notfound");
+            return new ErrorDataResult<GenreResponse>(null, messages.get("genre.notfound"));
         }
         Genre genre = optional.get();
         if (request.getName() != null && !request.getName().isBlank()) {
             genre.setName(request.getName().trim());
         }
         Genre saved = genreRepository.save(genre);
-        return new SuccessDataResult<>(new GenreResponse(saved.getId(), saved.getName()), "genre.updated");
+        return new SuccessDataResult<>(new GenreResponse(saved.getId(), saved.getName()), messages.get("genre.updated"));
     }
 
     @Override
     public Result delete(Long id) {
         if (!genreRepository.existsById(id)) {
-            return new ErrorResult("genre.notfound");
+            return new ErrorResult(messages.get("genre.notfound"));
         }
         genreRepository.deleteById(id);
-        return new SuccessResult("genre.deleted");
+        return new SuccessResult(messages.get("genre.deleted"));
     }
 }
