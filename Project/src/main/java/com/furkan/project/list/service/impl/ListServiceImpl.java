@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,26 +32,47 @@ public class ListServiceImpl implements ListService {
     private final UserApiService userApi;     // şu an sadece validator kullanıyor ama ileride işine yarar
     private final MovieApiService movieApi;
 
-    // ============== ADD ==============
+    // ============== ADD (restore-aware) ==============
     @Override
     public DataResult<ListItemResponse> addToList(Long userId, AddListItemRequest req) {
         var v = validator.validateAdd(userId, req);
         if (!v.isSuccess()) return new ErrorDataResult<>(null, v.getMessage());
 
-        if (!Boolean.TRUE.equals(v.getData())) { // zaten yoksa ekle
-            UserListItem li = new UserListItem();
-            li.setUserId(userId);
-            li.setMovieId(req.getMovieId());
-            li.setType(req.getType());
-            li.setOrderIndex(req.getOrderIndex());
-            listRepository.save(li);
+        // 1) Silinmiş kayıt varsa "restore" et (orderIndex null gelirse dokunma)
+        //  -> Bu satır repository'de küçük bir update methodu gerektirir (aşağıda imzası var).
+        int restored = listRepository.restoreOne(userId, req.getMovieId(), req.getType(), req.getOrderIndex());
+
+        if (restored == 0) {
+            // 2) Aktif kayıt var mı?
+            var existingOpt = listRepository.findByUserIdAndMovieIdAndTypeAndDeletedFalse(
+                    userId, req.getMovieId(), req.getType());
+
+            if (existingOpt.isPresent()) {
+                // İdempotent: sadece orderIndex değişmişse güncelle
+                var existing = existingOpt.get();
+                Integer idx = req.getOrderIndex();
+                if (idx != null && !Objects.equals(existing.getOrderIndex(), idx)) {
+                    existing.setOrderIndex(idx);
+                    listRepository.save(existing);
+                }
+            } else {
+                // 3) İlk kez ekleme
+                UserListItem li = new UserListItem();
+                li.setUserId(userId);
+                li.setMovieId(req.getMovieId());
+                li.setType(req.getType());
+                li.setOrderIndex(req.getOrderIndex()); // Integer, null olabilir
+                listRepository.save(li);
+            }
         }
 
-        var entityOpt = listRepository.findByUserIdAndMovieIdAndTypeAndDeletedFalse(userId, req.getMovieId(), req.getType());
-        if (entityOpt.isEmpty()) return new ErrorDataResult<>(null, "list.added"); // pratikte düşmez
+        // 4) Aktif kaydı çek ve response dön
+        var entity = listRepository.findByUserIdAndMovieIdAndTypeAndDeletedFalse(
+                userId, req.getMovieId(), req.getType()
+        ).orElseThrow(() -> new IllegalStateException("list.add.failed"));
 
         MovieSummary ms = movieApi.getSummary(req.getMovieId());
-        return new SuccessDataResult<>(toResponse(entityOpt.get(), ms), "list.added");
+        return new SuccessDataResult<>(toResponse(entity, ms), "list.added");
     }
 
     // ============== REMOVE (idempotent) ==============
@@ -92,38 +112,32 @@ public class ListServiceImpl implements ListService {
             return new PagedDataResult<>(items,
                     page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages(),
                     true, "ok");
+
         } else {
-            // 1) Kullanıcının bu listedeki tüm film id’leri
             List<Long> allIds = listRepository.findMovieIdsByUserAndType(userId, type);
-            // 2) Başlıkta q geçen id’ler
             Set<Long> filtered = movieApi.filterIdsByTitleWithin(allIds, q);
 
-            // 3) orderIndex/createdAt sırasına göre diz, sonra filtre uygula
-            List<Long> ordered = applyOrderIndex(userId, type);
-            List<Long> filteredOrdered = ordered.stream().filter(filtered::contains).toList();
+            List<UserListItem> orderedAll = fetchSortedItems(userId, type);
+            List<UserListItem> filteredOrdered = orderedAll.stream()
+                    .filter(li -> filtered.contains(li.getMovieId()))
+                    .toList();
 
-            // 4) Manuel pagination
-            int page = pageable.getPageNumber();
+            int pageNum = pageable.getPageNumber();
             int size = pageable.getPageSize();
             int total = filteredOrdered.size();
-            int from = Math.min(page * size, total);
+            int from = Math.min(pageNum * size, total);
             int to = Math.min(from + size, total);
-            List<Long> pageIds = (from < to) ? filteredOrdered.subList(from, to) : List.of();
+            List<UserListItem> pageItems = (from < to) ? filteredOrdered.subList(from, to) : List.of();
 
-            Map<Long, MovieSummary> summaries = movieApi.getSummaries(new HashSet<>(pageIds));
+            Set<Long> pageIds = pageItems.stream().map(UserListItem::getMovieId).collect(Collectors.toSet());
+            Map<Long, MovieSummary> summaries = movieApi.getSummaries(pageIds);
 
-            // entity meta (createdAt/orderIndex) için map
-            Map<Long, UserListItem> liByMovieId = listRepository
-                    .findByUserIdAndTypeAndDeletedFalse(userId, type, Pageable.unpaged())
-                    .getContent().stream()
-                    .collect(Collectors.toMap(UserListItem::getMovieId, x -> x, (a,b)->a));
-
-            var items = pageIds.stream()
-                    .map(id -> toResponse(liByMovieId.get(id), summaries.get(id)))
+            var items = pageItems.stream()
+                    .map(li -> toResponse(li, summaries.get(li.getMovieId())))
                     .toList();
 
             int totalPages = (int) Math.ceil(total / (double) size);
-            return new PagedDataResult<>(items, page, size, total, totalPages, true, "ok");
+            return new PagedDataResult<>(items, pageNum, size, total, totalPages, true, "ok");
         }
     }
 
@@ -184,23 +198,20 @@ public class ListServiceImpl implements ListService {
                 poster,
                 year,
                 li.getType(),
-                Optional.ofNullable(li.getCreatedAt()).orElse(Instant.now()),
+                li.getCreatedAt(),
                 li.getOrderIndex()
         );
     }
 
-    // orderIndex (null -> sona), sonra createdAt desc
-    private List<Long> applyOrderIndex(Long userId, ListType type) {
+    private List<UserListItem> fetchSortedItems(Long userId, ListType type) {
         var items = listRepository.findAll((root, cq, cb) -> cb.and(
                 cb.equal(root.get("userId"), userId),
                 cb.equal(root.get("type"), type),
                 cb.isFalse(root.get("deleted"))
         ));
-        return items.stream()
-                .sorted(Comparator
-                        .comparing((UserListItem x) -> Optional.ofNullable(x.getOrderIndex()).orElse(Integer.MAX_VALUE))
-                        .thenComparing(UserListItem::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
-                .map(UserListItem::getMovieId)
-                .toList();
+        items.sort(Comparator
+                .comparing((UserListItem x) -> Optional.ofNullable(x.getOrderIndex()).orElse(Integer.MAX_VALUE))
+                .thenComparing(UserListItem::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
+        return items;
     }
 }

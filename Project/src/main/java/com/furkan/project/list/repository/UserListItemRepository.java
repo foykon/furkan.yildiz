@@ -41,5 +41,11 @@ public interface UserListItemRepository extends JpaRepository<UserListItem, Long
       where li.userId = :userId and li.type = :type and li.deleted = false
     """)
     int softDeleteAll(@Param("userId") Long userId, @Param("type") ListType type);
+
+
+    @Modifying
+    @Query("update UserListItem li set li.deleted=false, li.deletedAt=null, li.orderIndex=:orderIndex " +
+            "where li.userId=:userId and li.movieId=:movieId and li.type=:type and li.deleted=true")
+    int restoreOne(Long userId, Long movieId, ListType type, Integer orderIndex);
 }
 

@@ -29,7 +29,7 @@ export default function Login(){
     <div className="auth-wrap">
       <Card style={{ width: 420, background: "rgba(255,255,255,0.04)", backdropFilter:"blur(4px)" }} styles={{ body: { padding: 28 } }}>
         <div className="brand" style={{ marginBottom: 16 }}>
-          <div className="brand-badge">FMOVIES</div>
+          <div className="brand-badge">Furki</div>
           <Title level={3} style={{ margin: 0 }}>Sign in</Title>
         </div>
         {error && <Alert type="error" message="Giriş başarısız" description={error} showIcon style={{ marginBottom: 16 }} />}
