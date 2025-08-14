@@ -35,7 +35,6 @@ public class EmailServiceImpl implements EmailService {
             mail.send(msg);
             log.info("Mail sent to={} subject={}", to, subject);
         } catch (Exception e) {
-            // Forgot akışında 500 olmasın diye HATA FIRLATMA.
             log.warn("email.send_failed to={} subject={} err={}", to, subject, e.toString());
         }
     }
