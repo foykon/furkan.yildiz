@@ -78,17 +78,69 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // --- Public altyapı ---
+                        .requestMatchers("/error", "/favicon.ico").permitAll()
                         .requestMatchers(
                                 "/api/v1/auth/**",
-                                "/api/auth/refresh",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/api/health/**",
                                 "/__probe/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers(HttpMethod.GET, "/api/v1/movies/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/movies/*/cast/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/movies/*/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,   "/api/v1/movies/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/api/v1/movies/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,  "/api/v1/movies/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/movies/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/actors/**",
+                                "/api/v1/genres/**",
+                                "/api/v1/directors/**",
+                                "/api/v1/languages/**",
+                                "/api/v1/countries/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/actors/**",
+                                "/api/v1/genres/**",
+                                "/api/v1/directors/**",
+                                "/api/v1/languages/**",
+                                "/api/v1/countries/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/v1/actors/**",
+                                "/api/v1/genres/**",
+                                "/api/v1/directors/**",
+                                "/api/v1/languages/**",
+                                "/api/v1/countries/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,
+                                "/api/v1/actors/**",
+                                "/api/v1/genres/**",
+                                "/api/v1/directors/**",
+                                "/api/v1/languages/**",
+                                "/api/v1/countries/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/v1/actors/**",
+                                "/api/v1/genres/**",
+                                "/api/v1/directors/**",
+                                "/api/v1/languages/**",
+                                "/api/v1/countries/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/lists/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,   "/api/v1/movies/*/comments").authenticated()
+                        .requestMatchers(HttpMethod.PATCH,  "/api/v1/movies/*/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/movies/*/comments/**").authenticated()
+
+                        .requestMatchers("/api/v1/movies/*/ai/**").authenticated()
+                        .requestMatchers("/api/v1/ai/cache/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter,
                         org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 

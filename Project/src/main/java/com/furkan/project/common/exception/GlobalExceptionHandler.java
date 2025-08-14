@@ -143,11 +143,7 @@ public class GlobalExceptionHandler {
 
     // -------- 500 (catch-all)
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result> handleGeneric(Exception ex, HttpServletRequest req) {
-        logServerError(req, ex, HttpStatus.INTERNAL_SERVER_ERROR, "internal.error");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResult("internal.error"));
-    }
+
 
     // ===== Helpers =====
 
